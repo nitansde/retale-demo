@@ -1,0 +1,59 @@
+{
+  "name": "retale-demo",
+  "version": "0.1.0",
+  "private": true,
+  "imports": {
+    "#html-entity-decoder": {
+      "browser": "./lib/html-entity-decoder.browser.ts",
+      "default": "./lib/html-entity-decoder.server.ts"
+    }
+  },
+  "engines": {
+    "node": ">=22.15.0"
+  },
+  "scripts": {
+    "dev": "next dev --webpack -H 0.0.0.0 -p 3000",
+    "build": "next build --webpack",
+    "typecheck": "tsc --noEmit",
+    "lint:demo": "eslint demo app/layout.tsx app/page.tsx scripts/*.mjs",
+    "test": "node --experimental-strip-types scripts/test-demo.mjs",
+    "verify:upstream": "node scripts/verify-upstream.mjs"
+  },
+  "dependencies": {
+    "@lancedb/lancedb": "^0.27.2",
+    "@tiptap/react": "^3.31.3",
+    "@tiptap/starter-kit": "^3.31.3",
+    "@xyflow/react": "^12.10.2",
+    "clsx": "^2.1.1",
+    "entities": "^6.0.1",
+    "lucide-react": "^1.14.0",
+    "next": "16.3.5",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "tailwind-merge": "^3.6.0",
+    "typescript": "^5",
+    "zod": "^3.25.76",
+    "zustand": "^5.0.13",
+    "msw": "^2.14.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "esbuild": "^0.27.7",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.5",
+    "jsdom": "^26.1.0",
+    "tailwindcss": "^4",
+    "vitest": "^3.2.4"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
+  }
+}

@@ -1,0 +1,288 @@
+{
+  "name": "ReTale 默认 · 中文",
+  "prompts": [
+    {
+      "identifier": "main",
+      "name": "任务理解",
+      "role": "user",
+      "enabled": true,
+      "content": "【任务理解】\n根据本次请求完成改写、扩写、续写或角色互动。默认使用自然的简体中文；用户明确指定语言、文风、人称或写法时，按本次要求处理。\n改写时保留未被要求改变的内容；扩写时充实给定情节；续写时从前文自然接续，不复述已经发生的段落。用户未作说明的部分，结合原文与场景作合理安排，无需先询问写作偏好。以下是通用写作偏好，具体任务要求优先。",
+      "system_prompt": true,
+      "marker": false,
+      "injection_position": 0,
+      "injection_depth": 4,
+      "injection_order": 100,
+      "forbid_overrides": false,
+      "injection_trigger": []
+    },
+    {
+      "identifier": "retale-continuity",
+      "name": "设定与视角",
+      "role": "user",
+      "enabled": true,
+      "content": "【设定与视角】\n依据当前提供的故事状态、人物关系和已发生事件写作，保持时间、地点、物品、称呼及因果关系一致。分歧改写从指定的变化点展开，不倒改此前已确认的事实，也不把尚未发生的原作情节当作既定结果。\n延续原文的叙事视角与人称；缺少参照时采用清楚、稳定的有限视角。区分读者知道的事与角色知道的事，角色只能根据自己的见闻、经验和合理推断行动。缺失的小细节可适度补足，关键设定不随意编造。",
+      "system_prompt": false,
+      "marker": false,
+      "injection_position": 0,
+      "injection_depth": 4,
+      "injection_order": 100,
+      "forbid_overrides": false,
+      "injection_trigger": []
+    },
+    {
+      "identifier": "retale-characters",
+      "name": "人物与对白",
+      "role": "user",
+      "enabled": true,
+      "content": "【人物与对白】\n让人物的性格、经历、目的和当下处境决定反应，用具体的选择与行动表现人物。情绪和关系的变化要有过程，不因一次互动就突然狂热、崩溃、臣服或亲密。原作中已有依据的强烈情绪与矛盾应如实保留。\n对白符合人物身份、时代与彼此关系，有话题、有回应，允许停顿、含蓄和言不由衷。少用所有角色通用的漂亮话，不让日常交谈变成说明书。角色互动按本次任务指定的扮演范围生成台词与行动，未授权的关键决定留给用户。",
+      "system_prompt": false,
+      "marker": false,
+      "injection_position": 0,
+      "injection_depth": 4,
+      "injection_order": 100,
+      "forbid_overrides": false,
+      "injection_trigger": []
+    },
+    {
+      "identifier": "retale-prose",
+      "name": "清爽表达",
+      "role": "user",
+      "enabled": true,
+      "content": "【清爽表达】\n优先贴合原作的语言质地；没有明确文风时，用准确、流畅、克制的中文。围绕当前场景选取有用的动作、感官和环境细节，详略有别，不逐项罗列，也不把每个瞬间都放大。\n情绪可通过动作、对白和适量心理描写自然呈现。读者已经能理解的地方，不再追加解释；比喻贴切即可，不连续堆叠。避免重复句式、空泛形容和同义反复。段落随叙事与对话自然划分，长短适宜。",
+      "system_prompt": false,
+      "marker": false,
+      "injection_position": 0,
+      "injection_depth": 4,
+      "injection_order": 100,
+      "forbid_overrides": false,
+      "injection_trigger": []
+    },
+    {
+      "identifier": "retale-pacing",
+      "name": "自然推进",
+      "role": "user",
+      "enabled": true,
+      "content": "【自然推进】\n围绕用户当前关心的人物与事件展开，让互动带来具体的回应、信息或局面变化。日常可以从容，冲突可以紧凑，节奏随场景变化。安静克制是表达偏好，不要求情节平淡，也不削弱原作的幽默、危险或张力。\n新人物、转场、意外和关系进展要有情节依据，不为制造悬念而机械安排打断或强行反转。结尾停在适合当前任务的自然节点，保留必要的余地，不例行总结、升华或预告下一幕。",
+      "system_prompt": false,
+      "marker": false,
+      "injection_position": 0,
+      "injection_depth": 4,
+      "injection_order": 100,
+      "forbid_overrides": false,
+      "injection_trigger": []
+    },
+    {
+      "identifier": "retale-output",
+      "name": "篇幅与交付",
+      "role": "user",
+      "enabled": true,
+      "content": "【篇幅与交付】\n按本次请求的目标字数和内容范围安排篇幅，允许为完整表达适度浮动，不靠重复描写凑字数。没有指定字数时，写到当前片段或这一轮互动完整即可，不擅自扩成整章。\n遵守当前任务要求的输出格式。要求 JSON、blocks 或指定字段时，仅返回对应结构，将故事内容放入指定字段；普通正文任务直接返回正文。除非本次任务明确要求，不添加开场白、创作说明、构思过程、额外标题、标签、状态栏、选项或附录。",
+      "system_prompt": false,
+      "marker": false,
+      "injection_position": 0,
+      "injection_depth": 4,
+      "injection_order": 100,
+      "forbid_overrides": false,
+      "injection_trigger": []
+    },
+    {
+      "identifier": "worldInfoBefore",
+      "name": "世界书（前）",
+      "role": "system",
+      "system_prompt": true,
+      "marker": true,
+      "enabled": true,
+      "content": ""
+    },
+    {
+      "identifier": "personaDescription",
+      "name": "用户设定",
+      "role": "system",
+      "system_prompt": true,
+      "marker": true,
+      "enabled": true,
+      "content": ""
+    },
+    {
+      "identifier": "charDescription",
+      "name": "角色描述",
+      "role": "system",
+      "system_prompt": true,
+      "marker": true,
+      "enabled": true,
+      "content": ""
+    },
+    {
+      "identifier": "charPersonality",
+      "name": "角色性格",
+      "role": "system",
+      "system_prompt": true,
+      "marker": true,
+      "enabled": true,
+      "content": ""
+    },
+    {
+      "identifier": "scenario",
+      "name": "场景设定",
+      "role": "system",
+      "system_prompt": true,
+      "marker": true,
+      "enabled": true,
+      "content": ""
+    },
+    {
+      "identifier": "worldInfoAfter",
+      "name": "世界书（后）",
+      "role": "system",
+      "system_prompt": true,
+      "marker": true,
+      "enabled": true,
+      "content": ""
+    },
+    {
+      "identifier": "dialogueExamples",
+      "name": "对话示例",
+      "role": "system",
+      "system_prompt": true,
+      "marker": true,
+      "enabled": true,
+      "content": ""
+    },
+    {
+      "identifier": "chatHistory",
+      "name": "聊天记录",
+      "role": "system",
+      "system_prompt": true,
+      "marker": true,
+      "enabled": true,
+      "content": ""
+    }
+  ],
+  "prompt_order": [
+    {
+      "character_id": 100000,
+      "order": [
+        {
+          "identifier": "main",
+          "enabled": true
+        },
+        {
+          "identifier": "retale-continuity",
+          "enabled": true
+        },
+        {
+          "identifier": "retale-characters",
+          "enabled": true
+        },
+        {
+          "identifier": "retale-prose",
+          "enabled": true
+        },
+        {
+          "identifier": "retale-pacing",
+          "enabled": true
+        },
+        {
+          "identifier": "retale-output",
+          "enabled": true
+        },
+        {
+          "identifier": "worldInfoBefore",
+          "enabled": true
+        },
+        {
+          "identifier": "personaDescription",
+          "enabled": true
+        },
+        {
+          "identifier": "charDescription",
+          "enabled": true
+        },
+        {
+          "identifier": "charPersonality",
+          "enabled": true
+        },
+        {
+          "identifier": "scenario",
+          "enabled": true
+        },
+        {
+          "identifier": "worldInfoAfter",
+          "enabled": true
+        },
+        {
+          "identifier": "dialogueExamples",
+          "enabled": true
+        },
+        {
+          "identifier": "chatHistory",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "character_id": 100001,
+      "order": [
+        {
+          "identifier": "main",
+          "enabled": true
+        },
+        {
+          "identifier": "retale-continuity",
+          "enabled": true
+        },
+        {
+          "identifier": "retale-characters",
+          "enabled": true
+        },
+        {
+          "identifier": "retale-prose",
+          "enabled": true
+        },
+        {
+          "identifier": "retale-pacing",
+          "enabled": true
+        },
+        {
+          "identifier": "retale-output",
+          "enabled": true
+        },
+        {
+          "identifier": "worldInfoBefore",
+          "enabled": true
+        },
+        {
+          "identifier": "personaDescription",
+          "enabled": true
+        },
+        {
+          "identifier": "charDescription",
+          "enabled": true
+        },
+        {
+          "identifier": "charPersonality",
+          "enabled": true
+        },
+        {
+          "identifier": "scenario",
+          "enabled": true
+        },
+        {
+          "identifier": "worldInfoAfter",
+          "enabled": true
+        },
+        {
+          "identifier": "dialogueExamples",
+          "enabled": true
+        },
+        {
+          "identifier": "chatHistory",
+          "enabled": true
+        }
+      ]
+    }
+  ],
+  "extensions": {
+    "regex_scripts": []
+  }
+}

@@ -1,0 +1,175 @@
+/* Shared color tokens only: theme changes never alter layout or typography. */
+:root {
+  --surface: #0b0d12;
+  --surface-rgb: 11 13 18;
+  --panel: #0d1017;
+  --raised: #11141d;
+  --raised-rgb: 17 20 29;
+  --field: #11141c;
+  --inset: #0f1218;
+  --floating: #090b10;
+  --canvas: #090c12;
+  --scrim: #05060a;
+  --line: #fff;
+  --overlay: #fff;
+  --shade: #000;
+  --heading: #fff;
+  --shadow-strength: 1;
+  --primary-shadow: rgba(99, 102, 241, 0.28);
+  --page-glow: rgba(129, 140, 248, 0.12);
+  --branch-rgb: 76 29 149;
+  --branch-hover-rgb: 91 33 182;
+  --graph-mask: rgba(4, 6, 10, 0.68);
+}
+
+@theme inline {
+  --color-surface: var(--surface);
+  --color-panel: var(--panel);
+  --color-raised: var(--raised);
+  --color-field: var(--field);
+  --color-inset: var(--inset);
+  --color-floating: var(--floating);
+  --color-canvas: var(--canvas);
+  --color-scrim: var(--scrim);
+  --color-line: var(--line);
+  --color-overlay: var(--overlay);
+  --color-shade: var(--shade);
+  --color-heading: var(--heading);
+}
+
+/* The existing utility palette is shared by text, borders and status accents.
+   Give its pale foregrounds sufficient contrast on both light backgrounds. */
+:root[data-theme='light'],
+:root[data-theme='green'] {
+  color-scheme: light;
+  --background: #f7f8fa;
+  --foreground: #242b35;
+  --surface: #fff;
+  --surface-rgb: 255 255 255;
+  --panel: #fcfcfd;
+  --raised: #fff;
+  --raised-rgb: 255 255 255;
+  --field: #fff;
+  --inset: #f3f5f8;
+  --floating: #fff;
+  --canvas: #f4f6f9;
+  --line: #42516a;
+  --overlay: #42516a;
+  --shade: #b8c2d0;
+  --heading: #17212f;
+  --shadow-strength: 0.16;
+  --primary-shadow: rgba(99, 102, 241, 0.12);
+  --page-glow: rgba(129, 140, 248, 0.045);
+  --branch-rgb: 233 229 248;
+  --branch-hover-rgb: 224 219 244;
+  --graph-mask: rgba(220, 226, 236, 0.55);
+  --color-zinc-50: #17212f;
+  --color-zinc-100: #242b35;
+  --color-zinc-200: #303a48;
+  --color-zinc-300: #465365;
+  --color-zinc-400: #586579;
+  --color-zinc-500: #657186;
+  --color-zinc-600: #707b8c;
+  --color-violet-50: #452484;
+  --color-violet-100: #513092;
+  --color-violet-200: #59369d;
+  --color-violet-300: #6444ad;
+  --color-violet-400: #7652c7;
+  --color-violet-500: #6f46bf;
+  --color-indigo-100: #363c88;
+  --color-indigo-200: #424995;
+  --color-indigo-300: #5058ae;
+  --color-indigo-400: #5a62c7;
+  --color-indigo-500: #4f57bd;
+  --color-sky-50: #084765;
+  --color-sky-100: #0b5274;
+  --color-sky-200: #155e80;
+  --color-sky-300: #16698e;
+  --color-sky-400: #15799e;
+  --color-sky-500: #0d7197;
+  --color-emerald-50: #124a37;
+  --color-emerald-100: #14583e;
+  --color-emerald-200: #1d6147;
+  --color-emerald-300: #246e50;
+  --color-emerald-400: #247d5b;
+  --color-emerald-500: #187450;
+  --color-amber-50: #663900;
+  --color-amber-100: #754300;
+  --color-amber-200: #7d4b06;
+  --color-amber-300: #8b5204;
+  --color-amber-400: #966015;
+  --color-amber-500: #aa721e;
+  --color-rose-50: #7d233e;
+  --color-rose-100: #912844;
+  --color-rose-200: #a02f4b;
+  --color-rose-300: #ad3552;
+  --color-rose-400: #bb3e5e;
+  --color-rose-500: #b23355;
+  --color-fuchsia-50: #702779;
+  --color-fuchsia-100: #802c8c;
+  --color-fuchsia-200: #893497;
+  --color-fuchsia-300: #933ea1;
+  --color-fuchsia-400: #a348ad;
+  --color-fuchsia-500: #963b9f;
+  --color-orange-100: #7c3c0e;
+  --color-orange-300: #9a4a13;
+  --color-orange-500: #ae561e;
+}
+
+/* Inspired by Readest's Grass palette: muted green paper, deep green ink.
+   https://github.com/readest/readest/blob/main/apps/readest-app/src/styles/themes.ts */
+:root[data-theme='green'] {
+  --background: #e0ead8;
+  --foreground: #293b2e;
+  --surface: #e8f0e1;
+  --surface-rgb: 232 240 225;
+  --panel: #e7eedf;
+  --raised: #edf3e7;
+  --raised-rgb: 237 243 231;
+  --field: #eef4e9;
+  --inset: #dce7d4;
+  --floating: #edf3e7;
+  --canvas: #dce7d4;
+  --line: #36563c;
+  --overlay: #36563c;
+  --shade: #a2b49a;
+  --heading: #22382a;
+  --primary-shadow: rgba(59, 110, 71, 0.14);
+  --page-glow: rgba(111, 145, 98, 0.04);
+  --branch-rgb: 218 232 208;
+  --branch-hover-rgb: 208 224 197;
+  --graph-mask: rgba(196, 214, 184, 0.55);
+  --color-zinc-50: #22382a;
+  --color-zinc-100: #293b2e;
+  --color-zinc-200: #344735;
+  --color-zinc-300: #445744;
+  --color-zinc-400: #52644f;
+  --color-zinc-500: #5c6e58;
+  --color-zinc-600: #64755f;
+  --color-violet-50: #244a32;
+  --color-violet-100: #2b5538;
+  --color-violet-200: #315e3e;
+  --color-violet-300: #376847;
+  --color-violet-400: #457850;
+  --color-violet-500: #3b6e47;
+  --color-indigo-100: #2b5538;
+  --color-indigo-200: #315e3e;
+  --color-indigo-300: #376847;
+  --color-indigo-400: #457850;
+  --color-indigo-500: #3b6e47;
+}
+
+.theme-swatch-dark { background: #0a0c12; border-color: #555c6e; }
+.theme-swatch-light { background: #f7f8fa; border-color: #b8c2d0; }
+.theme-swatch-green { background: #e0ead8; border-color: #98ac8b; }
+
+:root[data-theme='light'] .react-flow,
+:root[data-theme='green'] .react-flow {
+  --xy-controls-button-background-color: var(--panel);
+  --xy-controls-button-background-color-hover: var(--inset);
+  --xy-controls-button-color: var(--foreground);
+  --xy-controls-button-color-hover: var(--heading);
+  --xy-controls-button-border-color: color-mix(in srgb, var(--line) 12%, transparent);
+  --xy-handle-background-color: var(--color-violet-500);
+  --xy-handle-border-color: var(--surface);
+}

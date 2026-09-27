@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "baseline": {
+    "description": "Graph browsing, generated-history compression and Chinese writing defaults with Next.js 16.3.5 / Tiptap 3.31.3; route budgets allow approximately 5% growth over this measured webpack build.",
+    "measuredAt": "2026-09-20",
+    "routes": {
+      "/workspace": { "rawBytes": 1530042, "gzipBytes": 438441 },
+      "/library": { "rawBytes": 851155, "gzipBytes": 249551 }
+    }
+  },
+  "routes": {
+    "/workspace": {
+      "rawBytes": 1610000,
+      "gzipBytes": 461000
+    },
+    "/library": {
+      "rawBytes": 894000,
+      "gzipBytes": 263000
+    }
+  },
+  "requiredTraceAssets": [
+    {
+      "path": "hanlp_bootstrap.py",
+      "minimumManifestCount": 1
+    },
+    {
+      "path": "scripts/knowledge-worker.mjs",
+      "minimumManifestCount": 1
+    },
+    {
+      "path": "scripts/worker-diagnostics.mjs",
+      "minimumManifestCount": 1
+    },
+    {
+      "pathPattern": "node_modules/@lancedb/lancedb-*/lancedb.*.node",
+      "minimumManifestCount": 1
+    },
+    {
+      "path": ".retale-worker/knowledge-worker-runtime.mjs",
+      "minimumManifestCount": 1,
+      "requiredManifestPatterns": [
+        "server/app/api/knowledge-view/route.js.nft.json"
+      ]
+    },
+    {
+      "path": ".retale-worker/knowledge-worker-runtime.mjs.map",
+      "minimumManifestCount": 1
+    }
+  ]
+}

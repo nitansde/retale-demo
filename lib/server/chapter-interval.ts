@@ -1,0 +1,1 @@
+export const INF_CHAPTER = 2147483647

@@ -1,1 +1,13 @@
-.DS_Store
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+test-results/
+playwright-report/
+.env*
+!.env.example
+*.db
+*.db-*
+*.sqlite*
+data/
+logs/

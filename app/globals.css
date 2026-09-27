@@ -1,0 +1,92 @@
+@import "tailwindcss";
+@import "./themes.css";
+
+/* Defaults belong in the base layer so the selected theme takes precedence. */
+@layer base {
+  :root {
+    color-scheme: dark;
+    --background: #0a0c12;
+    --foreground: #f4f4f5;
+    --font-app-ui: var(--font-noto-sans-sc), var(--font-geist-sans), sans-serif;
+    --font-app-reading: var(--font-noto-serif-sc), serif;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-app-ui);
+  --font-ui: var(--font-app-ui);
+  --font-serif-cn: var(--font-app-reading);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-app-ui);
+}
+
+.ProseMirror,
+.reader-body-prose {
+  font-family: var(--font-app-reading);
+  font-size: 1.04rem;
+  line-height: 2;
+}
+
+.ProseMirror {
+  min-height: 62vh;
+  color: var(--color-zinc-200);
+}
+
+.ProseMirror:focus {
+  outline: none;
+}
+
+.ProseMirror p,
+.reader-body-prose p {
+  margin: 0 0 1.15rem;
+}
+
+.ProseMirror h2 {
+  margin: 1.6rem 0 1rem;
+  font-size: 1.45rem;
+  font-weight: 700;
+}
+
+.ProseMirror blockquote {
+  border-left: 3px solid color-mix(in srgb, var(--line) 15%, transparent);
+  padding-left: 1rem;
+  color: var(--color-zinc-400);
+}
+
+.ProseMirror ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .dialog-backdrop {
+    animation: dialog-backdrop-in 160ms ease-out both;
+  }
+
+  .dialog-surface {
+    animation: dialog-surface-in 180ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+}
+
+@keyframes dialog-backdrop-in {
+  from { opacity: 0; }
+}
+
+@keyframes dialog-surface-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.99);
+  }
+}
