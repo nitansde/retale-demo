@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b0f13" />
+    <meta name="description" content="ReTale · 戏说：把故事写成可以继续的世界。功能演示与产品预览。" />
+    <title>ReTale · 戏说 — 把故事写成可以继续的世界</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23161e22'/%3E%3Cpath d='M17 43V20h8l7 10 7-10h8v23h-7V30l-8 11-8-11v13z' fill='%2380e0cc'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="ambient ambient-one" aria-hidden="true"></div>
+    <div class="ambient ambient-two" aria-hidden="true"></div>
+    <header class="topbar" data-topbar>
+      <a class="brand" href="#top" aria-label="回到顶部">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none"><path d="M10 28V12h6.3l3.7 5.6 3.8-5.6H30v16h-5v-9.5l-5 7-5-7V28z" fill="currentColor"/><path d="M29.5 9.5 33 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+        </span>
+        <span class="brand-copy"><strong>ReTale</strong><small>戏说</small></span>
+      </a>
+      <nav class="desktop-nav" aria-label="主导航">
+        <a href="#studio" class="nav-link is-active" data-nav-target="studio">工作台</a>
+        <a href="#memory" class="nav-link" data-nav-target="memory">故事记忆</a>
+        <a href="#branches" class="nav-link" data-nav-target="branches">分支宇宙</a>
+        <a href="#skills" class="nav-link" data-nav-target="skills">写作技能</a>
+      </nav>
+      <div class="topbar-actions">
+        <span class="status-pill"><span class="status-dot"></span>local-first</span>
+        <a class="github-link" href="https://github.com/nitansde/retale-showcase" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+        <button class="menu-toggle" type="button" aria-label="打开菜单" aria-expanded="false" data-menu-toggle><span></span><span></span></button>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero section-shell">
+        <div class="hero-copy reveal">
+          <div class="eyebrow"><span class="eyebrow-line"></span><span>AI 阅读与改编工作台</span><span class="eyebrow-tag">v0.1 / preview</span></div>
+          <h1>把故事写成<br /><em>可以继续</em>的世界。</h1>
+          <p class="hero-lead">读到一个转折，选中它，说出你的如果当时。ReTale 把原文、人物、关系和每一条新走向放在同一张创作桌上。</p>
+          <div class="hero-actions">
+            <a href="#studio" class="button button-primary">浏览功能 <span aria-hidden="true">↓</span></a>
+            <a href="#principles" class="button button-quiet">为什么 ReTale <span aria-hidden="true">↘</span></a>
+          </div>
+          <div class="hero-note"><span class="note-mark">✦</span><span>开源 · 自托管 · 你的故事留在你的设备</span></div>
+        </div>
+
+        <div class="hero-stage reveal reveal-delay" aria-label="ReTale 工作台预览">
+          <div class="stage-orbit orbit-one"></div>
+          <div class="stage-orbit orbit-two"></div>
+          <div class="workspace-window">
+            <div class="window-toolbar">
+              <div class="window-brand"><span class="mini-mark">R</span><span>雾城来信</span><span class="window-slash">/</span><span class="dim">第 03 章 · 雨夜的铜钥匙</span></div>
+              <span class="window-state"><i></i>已保存</span>
+            </div>
+            <div class="window-body">
+              <aside class="window-rail">
+                <div class="rail-label">章节</div>
+                <div class="rail-item">01 <span>渡口</span></div>
+                <div class="rail-item">02 <span>旧剧院</span></div>
+                <div class="rail-item active">03 <span>雨夜的铜钥匙</span><b>2</b></div>
+                <div class="rail-item">04 <span>灯塔来信</span></div>
+                <div class="rail-item">05 <span>北岸的雾</span></div>
+                <div class="rail-divider"></div>
+                <div class="rail-label">分支</div>
+                <div class="rail-branch"><span class="branch-dot teal"></span>林舟同行</div>
+                <div class="rail-branch"><span class="branch-dot orange"></span>独自赴约</div>
+              </aside>
+              <div class="window-editor">
+                <div class="editor-meta"><span class="kicker">03 / ORIGINAL</span><span>阅读模式 <span class="chevron">⌄</span></span></div>
+                <h3>雨夜的铜钥匙</h3>
+                <p>雨水顺着屋檐落下来，像一串没有说完的话。林舟把钥匙攥在手心，金属的凉意让他想起那封没有署名的信。</p>
+                <p>“你还是来了。”沈遥站在剧院门口，伞面遮住了她的眼睛。</p>
+                <p class="selected-line"><span>他本该转身离开，却看见她手里也握着另一把钥匙。</span></p>
+                <div class="selection-popover"><span class="selection-icon">✦</span><span>已选中 31 字</span><span class="popover-action">魔改 <b>↗</b></span></div>
+                <div class="editor-footer"><span>⌁ 1,248 字</span><span>来源 · 原文</span></div>
+              </div>
+              <aside class="window-inspector">
+                <div class="inspector-head"><span>创作助手</span><span class="inspector-dot"></span></div>
+                <div class="inspector-prompt"><span class="prompt-label">WHAT IF</span><p>让林舟决定和沈遥一起赴约。</p><span class="prompt-hint">保留铜钥匙伏笔，写出他从戒备到信任的转变。</span></div>
+                <div class="inspector-actions"><button class="tiny-button primary-tiny" type="button">生成版本 <span>↗</span></button><button class="tiny-button" type="button">高级上下文</button></div>
+                <div class="inspector-divider"></div>
+                <div class="context-row"><span class="context-icon">◈</span><span><b>故事上下文</b><small>4 人物 · 2 关系 · 3 线索</small></span><span class="context-arrow">›</span></div>
+                <div class="context-row"><span class="context-icon violet">⌘</span><span><b>章节分支</b><small>2 个可继续版本</small></span><span class="context-arrow">›</span></div>
+              </aside>
+            </div>
+          </div>
+          <div class="floating-chip chip-top"><span class="chip-spark">✦</span><span>从一句话开始改写</span></div>
+          <div class="floating-chip chip-bottom"><span class="chip-avatar">L</span><span>林舟 · 现在知道</span><b>12</b></div>
+        </div>
+      </section>
+
+      <section class="signal-row section-shell reveal" aria-label="ReTale 特性">
+        <div class="signal"><span class="signal-number">01</span><span><b>读到哪里，</b><small>就从哪里开始创作</small></span></div>
+        <div class="signal"><span class="signal-number">02</span><span><b>每个如果，</b><small>都保留成一条分支</small></span></div>
+        <div class="signal"><span class="signal-number">03</span><span><b>故事资料，</b><small>跟着章节一起生长</small></span></div>
+        <div class="signal-end"><span class="status-dot"></span> 目前所有功能均可在下方预览</div>
+      </section>
+
+      <section class="capability-index section-shell reveal" id="overview">
+        <div class="section-intro compact-intro"><div><div class="section-label">CAPABILITY MAP <span>功能地图</span></div><h2>一张桌子，<br /><em>六种进入故事的方式。</em></h2></div><p>ReTale 把阅读、检索、改写和角色扮演放进同一套上下文里。下面的每个面板都使用静态演示数据，可以直接点击体验。</p></div>
+        <div class="capability-grid">
+          <a class="capability-card tone-teal" href="#studio"><span class="capability-index-no">01</span><span class="capability-icon">↗</span><h3>阅读与改写</h3><p>选中一段，写下你想改变的方向。</p><span class="capability-link">进入工作台 <b>→</b></span></a>
+          <a class="capability-card tone-lime" href="#memory"><span class="capability-index-no">02</span><span class="capability-icon">⌘</span><h3>故事知识图谱</h3><p>让人物、地点和线索彼此连起来。</p><span class="capability-link">查看故事记忆 <b>→</b></span></a>
+          <a class="capability-card tone-orange" href="#branches"><span class="capability-index-no">03</span><span class="capability-icon">⑂</span><h3>分支与未来跳跃</h3><p>保存每一个版本，去看更远的结果。</p><span class="capability-link">探索分支宇宙 <b>→</b></span></a>
+          <a class="capability-card tone-violet" href="#roleplay"><span class="capability-index-no">04</span><span class="capability-icon">◌</span><h3>角色扮演</h3><p>进入场景，亲自说出那句台词。</p><span class="capability-link">走进对话 <b>→</b></span></a>
+          <a class="capability-card tone-pink" href="#skills"><span class="capability-index-no">05</span><span class="capability-icon">✧</span><h3>写作技能工作室</h3><p>把喜欢的写法提炼成自己的卡片。</p><span class="capability-link">提炼写法 <b>→</b></span></a>
+          <a class="capability-card tone-blue" href="#toolkit"><span class="capability-index-no">06</span><span class="capability-icon">⌕</span><h3>检索与导入</h3><p>记得原话或只记得情节，都能找回。</p><span class="capability-link">打开工具箱 <b>→</b></span></a>
+        </div>
+      </section>
+
+      <section class="showcase-section section-shell" id="studio">
+        <div class="section-intro reveal"><div><div class="section-label">01 / THE WORKSPACE <span>工作台</span></div><h2>阅读本身，<br /><em>就是创作入口。</em></h2></div><p>不必复制正文到聊天窗口。你读到哪里，就从哪里选中、提问、改写，并且随时回到原文。</p></div>
+        <div class="studio-demo demo-frame reveal reveal-delay">
+          <div class="demo-chrome"><span class="chrome-dots"><i></i><i></i><i></i></span><span class="chrome-title">workspace / 雾城来信</span><div class="chrome-tabs"><button class="chrome-tab is-active" data-demo-tab="rewrite" type="button">魔改</button><button class="chrome-tab" data-demo-tab="continue" type="button">续写</button><button class="chrome-tab" data-demo-tab="search" type="button">搜索</button></div></div>
+          <div class="studio-layout">
+            <aside class="demo-sidebar">
+              <div class="sidebar-title"><span>LIBRARY</span><button type="button" class="plus-button">＋</button></div>
+              <div class="book-mini-card"><div class="book-cover">雾<br />城</div><div><b>雾城来信</b><small>Ghost Letters</small><span class="book-progress"><i></i></span><small>阅读至 42%</small></div></div>
+              <div class="chapter-group"><span>PART I · 迷雾</span><button type="button">⌄</button></div>
+              <div class="chapter-item"><span>01</span>渡口 <em>✓</em></div><div class="chapter-item"><span>02</span>旧剧院 <em>✓</em></div><div class="chapter-item active"><span>03</span>雨夜的铜钥匙 <em class="chapter-count">2</em></div><div class="chapter-item"><span>04</span>灯塔来信</div><div class="chapter-item"><span>05</span>北岸的雾</div>
+              <div class="sidebar-bottom"><span class="avatar">N</span><span><b>nitansde</b><small>个人书库</small></span><span class="more">•••</span></div>
+            </aside>
+            <div class="demo-reader">
+              <div class="reader-toolbar"><span class="reader-type">ORIGINAL · 第 03 章</span><div><button type="button">Aa</button><button type="button">☼</button><button type="button">⋯</button></div></div>
+              <div class="reader-copy"><h3>雨夜的铜钥匙</h3><p>雨水顺着屋檐落下来，像一串没有说完的话。林舟把钥匙攥在手心，金属的凉意让他想起那封没有署名的信。</p><p>“你还是来了。”沈遥站在剧院门口，伞面遮住了她的眼睛。</p><p class="reader-highlight">他本该转身离开，却看见她手里也握着另一把钥匙。</p><p>远处的钟敲了十一下。雨幕里，剧院的门缓缓向内打开。</p><div class="reader-selection"><span>已选中 · 31 字</span><button type="button" data-action="rewrite">魔改这段 <b>✦</b></button></div></div>
+              <div class="reader-footer"><span>本章 1,248 字</span><span>⌘ K 快速操作</span></div>
+            </div>
+            <aside class="demo-inspector">
+              <div class="inspector-title"><span class="live-signal"></span><span>创作助手</span><span class="inspector-menu">•••</span></div>
+              <div class="demo-panel is-visible" data-demo-panel="rewrite"><span class="panel-kicker">WHAT IF / 魔改</span><h4>如果他们一起赴约？</h4><p>保留铜钥匙的伏笔，用动作表现林舟从戒备到信任的转变。</p><div class="panel-tags"><span>保留线索</span><span>动作优先</span><span>同章生成</span></div><button class="panel-cta" type="button" data-action="rewrite">生成另一个版本 <span>↗</span></button><div class="panel-status"><span class="status-dot"></span>上下文已就绪 · 4 个参考</div></div>
+              <div class="demo-panel" data-demo-panel="continue"><span class="panel-kicker">CONTINUE / 续写</span><h4>让这一刻继续发生。</h4><p>从选中的句子之后继续写，保持当前叙事视角和节奏。</p><div class="panel-tags"><span>当前视角</span><span>800 字以内</span></div><button class="panel-cta" type="button" data-action="continue">开始续写 <span>↗</span></button><div class="panel-status"><span class="status-dot"></span>沿用本章上下文</div></div>
+              <div class="demo-panel" data-demo-panel="search"><span class="panel-kicker">SEARCH / 搜索</span><h4>你记得哪一幕？</h4><p>用一句话描述情节，试试按含义找回原文。</p><div class="search-box"><span>⌕</span><span>她第一次把船票留给他</span></div><button class="panel-cta" type="button" data-action="search">查找相关段落 <span>↗</span></button><div class="panel-status"><span class="status-dot"></span>精确 + 语义搜索可选</div></div>
+              <div class="inspector-bottom"><div class="mini-context"><span>◈</span><span><b>故事上下文</b><small>人物 · 关系 · 线索</small></span><b>›</b></div><div class="mini-context"><span class="violet">⌁</span><span><b>章节分支</b><small>原文 + 2 个版本</small></span><b>›</b></div></div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="showcase-section section-shell memory-section" id="memory">
+        <div class="section-intro reveal"><div><div class="section-label">02 / STORY MEMORY <span>故事记忆</span></div><h2>让每条线索，<br /><em>都能被看见。</em></h2></div><p>知识库会把人物、关系、地点、设定和事件整理成可追溯的上下文。生成前，你可以检查它引用了什么。</p></div>
+        <div class="memory-layout reveal reveal-delay">
+          <div class="graph-card demo-frame"><div class="graph-toolbar"><span><span class="toolbar-dot teal"></span>STORY GRAPH</span><span>第 03 章 · 当前分支 <b>⌄</b></span></div><div class="graph-canvas"><div class="graph-grid"></div><svg class="graph-lines" viewBox="0 0 680 430" preserveAspectRatio="none" aria-hidden="true"><path d="M132 197 C210 155, 235 121, 305 113"/><path d="M132 203 C218 250, 255 281, 330 294"/><path d="M345 115 C414 133, 451 164, 500 185"/><path d="M345 297 C411 280, 459 245, 500 205"/><path d="M525 190 C571 186, 583 180, 620 173"/><path d="M510 218 C549 255, 559 292, 602 316"/></svg><div class="graph-node node-lin"><span class="node-avatar">林</span><b>林舟</b><small>主角 · 现在知道 12 条</small></div><div class="graph-node node-shen"><span class="node-avatar coral">沈</span><b>沈遥</b><small>信使 · 关系 4</small></div><div class="graph-node node-key"><span class="node-icon">⌑</span><b>铜钥匙</b><small>未解线索</small></div><div class="graph-node node-theatre"><span class="node-icon violet">◫</span><b>旧剧院</b><small>地点 · 第 03 章</small></div><div class="graph-node node-letter"><span class="node-icon lime">✉</span><b>无署名的信</b><small>事件 · 2 次提及</small></div><div class="graph-node node-ferry"><span class="node-icon orange">≋</span><b>北岸渡口</b><small>地点 · 第 01 章</small></div><div class="graph-legend"><span><i class="legend-dot teal"></i>人物</span><span><i class="legend-dot orange"></i>线索</span><span><i class="legend-dot violet"></i>地点</span></div></div><div class="graph-footer"><span>已建立 34 个节点 · 51 条关系</span><button type="button" data-action="graph">打开图谱 <b>↗</b></button></div></div>
+          <div class="memory-side"><div class="evidence-card"><div class="card-topline"><span class="card-kicker">RELATIONSHIP EVIDENCE</span><span class="confidence">置信度 92%</span></div><div class="relation"><span class="relation-person"><span class="node-avatar">林</span><b>林舟</b></span><span class="relation-line"><i></i><b>怀疑</b><i></i></span><span class="relation-person"><span class="node-avatar coral">沈</span><b>沈遥</b></span></div><p>“他想起她曾经在渡口等过自己——没有催促，只把船票压在栏杆下。”</p><div class="evidence-source"><span>引用自 · 第 01 章《渡口》</span><button type="button">跳转原文 ↗</button></div></div><div class="context-stack"><div class="context-stack-head"><span>生成前的上下文</span><small>4 个区块已选</small></div><div class="context-block"><span class="block-icon">♙</span><span><b>人物状态</b><small>林舟正在试探沈遥</small></span><span class="block-check">✓</span></div><div class="context-block"><span class="block-icon orange">⌑</span><span><b>关键线索</b><small>两把铜钥匙 · 未解</small></span><span class="block-check">✓</span></div><div class="context-block muted-block"><span class="block-icon violet">◫</span><span><b>地点氛围</b><small>暴雨 · 旧剧院入口</small></span><span class="block-check">✓</span></div><button type="button" class="text-button" data-action="context">调整高级上下文 <b>↗</b></button></div></div>
+        </div>
+      </section>
+
+      <section class="showcase-section section-shell branch-section" id="branches">
+        <div class="section-intro reveal"><div><div class="section-label">03 / BRANCHING WORLDS <span>分支宇宙</span></div><h2>保留原来的故事，<br /><em>也保留所有如果。</em></h2></div><p>改写、续写和 What-if 分支会留在章节导航里。选中你喜欢的版本继续，或者直接跳到未来看看它会带你去哪里。</p></div>
+        <div class="branch-demo demo-frame reveal reveal-delay"><div class="branch-demo-head"><div><span class="panel-kicker">CHAPTER NAVIGATION</span><h3>第 03 章 · 雨夜的铜钥匙</h3></div><div class="branch-controls"><button type="button" class="active">时间线</button><button type="button">卡片</button></div></div><div class="timeline"><div class="timeline-line"></div><div class="timeline-node original"><span class="timeline-dot"></span><div class="timeline-card"><div class="timeline-card-head"><span class="branch-badge original-badge">ORIGINAL</span><span class="timeline-time">刚刚</span></div><h4>独自赴约</h4><p>林舟没有回头，铜钥匙在掌心留下一个月牙形的印。</p><div class="timeline-meta"><span>原始章节</span><button type="button">阅读 <b>→</b></button></div></div></div><div class="timeline-node whatif"><span class="timeline-dot"></span><div class="timeline-card selected"><div class="timeline-card-head"><span class="branch-badge whatif-badge">WHAT-IF</span><span class="timeline-time">2 分钟前</span></div><h4>林舟决定一起赴约 <span class="selected-tag">当前</span></h4><p>他没有松开钥匙，只向她走近了一步。“带路。”</p><div class="timeline-meta"><span>由一句话生成</span><button type="button" data-action="branch">继续这个版本 <b>→</b></button></div></div></div><div class="timeline-node future"><span class="timeline-dot"></span><div class="timeline-card future-card"><div class="timeline-card-head"><span class="branch-badge future-badge">FUTURE JUMP</span><span class="timeline-time">目标 · 第 08 章</span></div><h4>灯塔重逢</h4><p>看看这次选择，会如何抵达那场迟来的重逢。</p><div class="timeline-meta"><span>桥接 5 章事件</span><button type="button" data-action="future-jump">预览未来 <b>↗</b></button></div></div></div></div><div class="branch-footer"><span><i class="status-dot"></i> 3 个版本保持独立 · 可随时回到原文</span><button type="button" class="button button-quiet small-button">新建分支 <span>＋</span></button></div></div>
+      </section>
+
+      <section class="showcase-section section-shell roleplay-section" id="roleplay">
+        <div class="section-intro reveal"><div><div class="section-label">04 / ROLEPLAY <span>角色扮演</span></div><h2>走进场景，<br /><em>亲自说出那句台词。</em></h2></div><p>选择你扮演的人物与互动对象，用一句开场白改变气氛。对话可以继续，也可以从任意一轮走向新的分支。</p></div>
+        <div class="roleplay-demo demo-frame reveal reveal-delay"><div class="roleplay-cast"><div class="cast-label">PLAYING AS</div><div class="cast-main"><span class="large-avatar">林</span><div><h3>林舟</h3><p>外冷内热 · 正在寻找真相</p></div><span class="cast-switch">⌄</span></div><div class="cast-label">SCENE</div><div class="scene-select"><span class="scene-icon">◫</span><span><b>旧剧院门口</b><small>第 03 章 · 雨夜</small></span><span>›</span></div><div class="cast-note"><span>✦</span><p>角色状态会随当前章节与分支变化。<b>沈遥</b>知道钥匙的另一半在哪里。</p></div><button type="button" class="text-button" data-action="roleplay-reset">换一个场景 <b>↗</b></button></div><div class="chat-panel"><div class="chat-head"><span><i class="status-dot"></i>沈遥正在等你</span><span>角色扮演 · 私密草稿</span></div><div class="chat-messages"><div class="chat-msg assistant"><span class="chat-avatar coral">沈</span><div><small>沈遥 · 11:02 PM</small><p>“你拿着它来，是想问我钥匙的事，还是想问那封信？”</p></div></div><div class="chat-msg user"><div><small>林舟 · 11:03 PM</small><p>“如果我说，我想知道你为什么一直等我呢？”</p></div><span class="chat-avatar">林</span></div><div class="chat-msg assistant typing" data-roleplay-response><span class="chat-avatar coral">沈</span><div><small>沈遥 · 正在输入…</small><p>她看了一眼他手里的钥匙，笑意很轻。</p></div></div></div><div class="chat-compose"><span class="compose-placeholder">以林舟的口吻继续说…</span><button type="button" class="compose-send" data-action="roleplay">发送 <span>↗</span></button></div></div></div>
+      </section>
+
+      <section class="showcase-section section-shell skills-section" id="skills">
+        <div class="section-intro reveal"><div><div class="section-label">05 / WRITING SKILLS <span>写作技能工作室</span></div><h2>把喜欢的写法，<br /><em>整理成自己的工具。</em></h2></div><p>从书库里挑一段素材，告诉 ReTale 你想研究什么。它会提炼方法、避免事项和参考范文，成为下一次写作可以调用的技能卡。</p></div>
+        <div class="skills-layout reveal reveal-delay"><div class="skill-studio demo-frame"><div class="skill-studio-head"><div><span class="panel-kicker">SKILL STUDIO</span><h3>我的写作技能</h3></div><button type="button" class="tiny-button">＋ 新建技能</button></div><div class="skill-prompt"><span class="skill-prompt-icon">✧</span><div><span>研究一个写法</span><p>“提炼有潜台词的对话，让人物不把心事直接说出来。”</p></div><button type="button" class="prompt-go" data-action="skill">开始提炼 <b>↗</b></button></div><div class="skill-card-grid"><article class="skill-card active-skill"><div class="skill-card-top"><span class="skill-type">DIALOGUE</span><span class="skill-menu">•••</span></div><h4>有潜台词的对话</h4><p>让表层对话承载没有说出口的关系变化。</p><div class="skill-card-footer"><span>3 个方法 · 2 个例句</span><span class="skill-star">✦</span></div></article><article class="skill-card"><div class="skill-card-top"><span class="skill-type">CHARACTER</span><span class="skill-menu">•••</span></div><h4>人物第一次出场</h4><p>用动作与环境先让读者感受到一个人。</p><div class="skill-card-footer"><span>4 个方法 · 1 个例句</span><span>☆</span></div></article><article class="skill-card"><div class="skill-card-top"><span class="skill-type">TENSION</span><span class="skill-menu">•••</span></div><h4>紧张的追逐场面</h4><p>控制信息释放的速度，让读者先听见脚步。</p><div class="skill-card-footer"><span>2 个方法 · 3 个例句</span><span>☆</span></div></article></div></div><div class="search-demo demo-frame" id="toolkit"><div class="search-demo-head"><span class="panel-kicker">SEARCH & IMPORT</span><span class="search-ready"><i class="status-dot"></i>检索数据已就绪</span></div><h3>不记得原句，<br /><em>也能找回那一幕。</em></h3><div class="search-switch"><button type="button" class="active">按含义</button><button type="button">精确词句</button></div><div class="semantic-search"><span>⌕</span><span class="search-placeholder">她第一次把船票留给他</span><button type="button" data-action="search-result">搜索</button></div><div class="search-result"><div class="result-top"><span>相关度 94%</span><span>第 01 章 · 渡口</span></div><p>她从口袋里取出一张折好的船票，压在栏杆下，像把一句话留给不会回头的人。</p><div class="result-footer"><span>原文 · 87 字</span><button type="button">打开段落 ↗</button></div></div><div class="import-row"><span class="import-icon">＋</span><span><b>导入 TXT 参考素材</b><small>用于阅读、检索或提炼写作技能</small></span><button type="button">选择文件</button></div></div></div>
+      </section>
+
+      <section class="principles section-shell reveal" id="principles"><div class="principles-copy"><div class="section-label">DESIGNED FOR AUTHORS <span>设计原则</span></div><h2>让 AI 参考故事，<br /><em>由你决定故事。</em></h2><p>上下文可以被看见，原作和分支彼此独立，模型可以替换。ReTale 把创作的方向盘留在作者手里。</p><a href="#top" class="text-button">回到顶部 <b>↑</b></a></div><div class="principle-list"><div class="principle-item"><span class="principle-no">01</span><div><h3>故事资料跟着章节走</h3><p>人物动机、关系和设定围绕当前场景组织，减少“记得但用错了”的情况。</p></div><span class="principle-mark">◈</span></div><div class="principle-item"><span class="principle-no">02</span><div><h3>原作与分支分开保留</h3><p>试错不会覆盖原文，每一次选择都可以成为一条可返回的路。</p></div><span class="principle-mark">⑂</span></div><div class="principle-item"><span class="principle-no">03</span><div><h3>模型由你选择</h3><p>支持兼容 OpenAI 接口的服务和 Ollama，本地数据存储在自己的设备。</p></div><span class="principle-mark">⌘</span></div></div></section>
+
+      <section class="cta-section section-shell reveal"><div class="cta-card"><div class="cta-orb"></div><div class="section-label">READY WHEN YOU ARE <span>现在开始</span></div><h2>下一章，<br /><em>由你来写。</em></h2><p>这是 ReTale 的功能预览。真正的故事，留在你的设备上继续。</p><div class="cta-actions"><a class="button button-primary" href="https://github.com/nitansde/retale-showcase" target="_blank" rel="noreferrer">查看 GitHub 仓库 <span>↗</span></a><a class="button button-quiet" href="#studio">再逛一遍功能 <span>↑</span></a></div></div></section>
+    </main>
+
+    <footer class="footer section-shell"><div class="footer-brand"><span class="brand-mark"><svg viewBox="0 0 40 40" fill="none"><path d="M10 28V12h6.3l3.7 5.6 3.8-5.6H30v16h-5v-9.5l-5 7-5-7V28z" fill="currentColor"/><path d="M29.5 9.5 33 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span><span><b>ReTale · 戏说</b><small>把故事写成可以继续的世界。</small></span></div><div class="footer-meta"><span>Static showcase · dummy data</span><a href="https://github.com/nitansde/retale-showcase" target="_blank" rel="noreferrer">GitHub ↗</a><span>© 2025 ReTale</span></div></footer>
+    <div class="toast" role="status" aria-live="polite" data-toast><span>✦</span><span data-toast-text>已完成</span></div>
+    <script src="script.js"></script>
+  </body>
+</html>
