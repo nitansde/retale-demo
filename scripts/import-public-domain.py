@@ -1,5 +1,5 @@
 """Fetch public-domain original Chinese chapters; never runs during site startup/build."""
-import json, re, time, urllib.parse, urllib.request, urllib.error
+import json, re, time, subprocess, urllib.parse, urllib.request, urllib.error
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sets = [('demo-redcliff', '三國演義', range(43, 51)), ('demo-monkey', '西遊記', range(4, 8))]
@@ -45,3 +45,6 @@ for book_id, work, numbers in sets:
         print(page, len(text))
     books[book_id] = chapters
 (ROOT / 'demo/catalog/public-domain.json').write_text(json.dumps(books, ensure_ascii=False, indent=2) + '\n')
+
+# Keep the displayed edition in simplified Chinese on future source refreshes.
+subprocess.run(["node", str(ROOT / "scripts/simplify-chinese-classics.mjs")], check=True)

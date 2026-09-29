@@ -1,6 +1,7 @@
 import { http, passthrough } from "msw";
 import { setupWorker } from "msw/browser";
 import { createDemoApi } from "./api";
+import { simplifyClassicDrafts } from "./simplified-classics";
 import { getDemoLocale } from "./locale";
 import { retiredNovelIds } from "./catalog";
 import { removeBrowserWorkspaceNovelSession } from "@/lib/browser-preferences";
@@ -13,6 +14,11 @@ export async function startDemo() {
   let saved: string | null = null;
   try {
     saved = localStorage.getItem(storageKey);
+    const rawDrafts = localStorage.getItem(CHAPTER_DRAFT_CACHE_STORAGE_KEY);
+    const simplifiedDrafts = simplifyClassicDrafts(saved, rawDrafts);
+    if (simplifiedDrafts !== null && simplifiedDrafts !== rawDrafts) {
+      localStorage.setItem(CHAPTER_DRAFT_CACHE_STORAGE_KEY, simplifiedDrafts);
+    }
   } catch {
     /* Restricted storage uses memory. */
   }

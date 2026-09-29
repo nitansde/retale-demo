@@ -6,8 +6,8 @@ import { mkdir, readFile } from 'node:fs/promises'
 
 await mkdir('test-results', { recursive: true })
 const outfile = resolve('test-results/workflows-catalog.cjs')
-await build({stdin:{contents:'export {chineseBooks} from "./demo/catalog";',resolveDir:process.cwd()},outfile,bundle:true,platform:'node',format:'cjs',packages:'external',logLevel:'silent'})
-const {chineseBooks} = createRequire(import.meta.url)(outfile)
+await build({stdin:{contents:'export {chineseBooks, catalogVersion} from "./demo/catalog";',resolveDir:process.cwd()},outfile,bundle:true,platform:'node',format:'cjs',packages:'external',logLevel:'silent'})
+const {chineseBooks, catalogVersion} = createRequire(import.meta.url)(outfile)
 const book = chineseBooks[0]
 const secondBook = chineseBooks[2]
 
@@ -52,7 +52,7 @@ try {
     expect(JSON.stringify(stored)).not.toContain('demo-mist')
     expect(JSON.stringify(stored)).not.toContain('demo-star')
     expect(stored['retale.chapter-drafts.v1']).toContain('Keep this draft')
-    expect(JSON.parse(stored['retale.demo.database.v1']).catalogVersion).toBe(4)
+    expect(JSON.parse(stored['retale.demo.database.v1']).catalogVersion).toBe(catalogVersion)
     console.log('PASS actual legacy database, remembered workspace and draft migration')
   }
   await page.screenshot({ path: 'test-results/library.png', fullPage: true })

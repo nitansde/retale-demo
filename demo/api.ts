@@ -1,4 +1,5 @@
 import { demoBooks, demoBookById, catalogVersion, bookLocale, introducedVersion, retiredNovelIds } from "./catalog";
+import { simplifiedClassicIds, simplifyClassicValue } from "./simplified-classics";
 import { makeEnglishPresets } from "./english-presets";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Only the HTTP boundary is dynamic. Pages, stores, schemas and UI are upstream ReTale.
@@ -16,7 +17,7 @@ import {
   createEmptyWorkspaceState,
 } from "@/lib/workspace-state";
 import { importNovelIntoWorkspace } from "@/lib/server/import-txt";
-import { htmlToPlainText } from "@/lib/utils";
+import { htmlToPlainText, countChineseFriendlyWords } from "@/lib/utils";
 import {
   normalizePresetCompatPresetImport,
   normalizePresetCompatStandaloneRegexImport,
@@ -130,6 +131,25 @@ export function createDemoApi(
     db.novels = Object.fromEntries([...demoBooks.map(b => b.id), ...Object.keys(db.novels)]
       .filter((key, index, all) => all.indexOf(key) === index && db.novels[key])
       .map(key => [key, db.novels[key]]));
+  }
+  if (restored && (db.catalogVersion || 1) < 5) {
+    for (const novelId of simplifiedClassicIds) {
+      for (const table of [db.novels, db.metadata, db.graphs, db.knowledge]) {
+        if (table[novelId]) table[novelId] = simplifyClassicValue(table[novelId]);
+      }
+      if (db.novels[novelId]) {
+        for (const chapter of db.novels[novelId].localChapters) chapter.wordCount = countChineseFriendlyWords(htmlToPlainText(chapter.content));
+        db.revisions[novelId] = (db.revisions[novelId] || 1) + 1;
+      }
+    }
+    db.nodes = db.nodes.map(node => simplifiedClassicIds.has(node.novelId) ? simplifyClassicValue(node) : node);
+    for (const table of [db.details, db.skills, db.jobs]) {
+      for (const [key, row] of Object.entries(table)) {
+        if (simplifiedClassicIds.has(row.novelId || row.libraryId || row.card?.libraryId)) {
+          table[key] = simplifyClassicValue(row);
+        }
+      }
+    }
   }
   db.catalogVersion = catalogVersion;
   db.englishPresets ??= makeEnglishPresets();

@@ -6,9 +6,9 @@ import { build } from 'esbuild'
 
 await mkdir('test-results', { recursive: true })
 const outfile = resolve('test-results/catalog-api.cjs')
-await build({ stdin: { contents: 'export {createDemoApi} from "./demo/api"; export {demoBooks, englishBooks, chineseBooks} from "./demo/catalog";', resolveDir: process.cwd() },
+await build({ stdin: { contents: 'export {createDemoApi} from "./demo/api"; export {simplifyChinese, simplifyClassicValue, simplifyClassicDrafts} from "./demo/simplified-classics"; export {createChapterContentFingerprint} from "./lib/chapter-draft-cache"; export {demoBooks, englishBooks, chineseBooks} from "./demo/catalog";', resolveDir: process.cwd() },
   outfile, bundle:true, platform:'node', format:'cjs', packages:'external', logLevel:'silent' })
-const { createDemoApi, demoBooks, englishBooks, chineseBooks } = createRequire(import.meta.url)(outfile)
+const { createDemoApi, demoBooks, englishBooks, chineseBooks, simplifyChinese, simplifyClassicValue, simplifyClassicDrafts, createChapterContentFingerprint } = createRequire(import.meta.url)(outfile)
 const api = createDemoApi()
 const snapshot = JSON.parse(api.snapshot())
 const call = async (path, body) => {
@@ -148,6 +148,51 @@ assert.ok((await request('novels')).novels.every(n=>!englishBooks.some(b=>b.id==
 locale = 'en'
 assert.equal((await request('novels')).novels.length,7)
 assert.equal(JSON.parse(createDemoApi(bilingual.snapshot()).snapshot()).nodes.length,v3.nodes.length)
+// Edition 4 snapshots convert only the two classics, including custom edits and branch history.
+const traditional = structuredClone(snapshot)
+traditional.catalogVersion = 4
+const classicId = 'demo-redcliff'
+const chapter = traditional.novels[classicId].localChapters[0]
+chapter.content = '<p>諸葛亮說：「這是訪客新增的話，關於孫權與劉備。」</p>'
+chapter.originalContent = '<p>原文：孔明與魯肅。</p>'
+chapter.title = '第四十三回 舌戰群儒'
+traditional.details['demo-redcliff-rewrite'].sourceTextSnapshot = '孔明曰：「只消三日，便可拜納十萬枝箭。」'
+traditional.graphs[classicId].edges[0].evidenceQuote = '孔明與魯肅。'
+traditional.skills['demo-redcliff-skill'].examples[0].anonymizedText = '孔明與魯肅。'
+traditional.metadata[classicId] = {title:'三國演義',coverImage:'https://example.test/三國.png'}
+traditional.novels['my-import'] = {...structuredClone(traditional.novels[classicId]),currentNovelId:'my-import'}
+delete traditional.novels['demo-monkey']
+const raw = JSON.stringify(traditional)
+const convertedApi = createDemoApi(raw)
+const converted = JSON.parse(convertedApi.snapshot())
+assert.equal(converted.novels[classicId].localChapters[0].content,'<p>诸葛亮说：「这是访客新增的话，关于孙权与刘备。」</p>')
+assert.equal(converted.novels[classicId].localChapters[0].originalContent,'<p>原文：孔明与鲁肃。</p>')
+assert.equal(converted.novels[classicId].localChapters[0].title,'第四十三回 舌战群儒')
+assert.equal(converted.revisions[classicId],traditional.revisions[classicId]+1)
+assert.equal(converted.novels['demo-monkey'],undefined)
+assert.equal(converted.details['demo-redcliff-rewrite'].sourceTextSnapshot,'孔明曰：「只消三日，便可拜纳十万枝箭。」')
+assert.equal(converted.graphs[classicId].edges[0].evidenceQuote,'孔明与鲁肃。')
+assert.equal(converted.skills['demo-redcliff-skill'].examples[0].anonymizedText,'孔明与鲁肃。')
+assert.equal(converted.metadata[classicId].coverImage,traditional.metadata[classicId].coverImage)
+assert.deepEqual(converted.novels['my-import'],traditional.novels['my-import'])
+assert.deepEqual(converted.novels['demo-safe-room'],traditional.novels['demo-safe-room'])
+assert.equal(createDemoApi(convertedApi.snapshot()).snapshot(),convertedApi.snapshot())
+const pendingDrafts = {version:1,entries:[
+  {novelId:classicId,chapterId:chapter.id,content:'<p>未儲存的草稿，請保留我的修改。</p>',baseContentFingerprint:createChapterContentFingerprint(chapter.content)},
+  {novelId:classicId,chapterId:'unknown-chapter',content:'保留衝突',baseContentFingerprint:'real-conflict'},
+  {novelId:'my-import',chapterId:'imported',content:'不轉換我匯入的文字',baseContentFingerprint:'unchanged'},
+]}
+const drafts = JSON.parse(simplifyClassicDrafts(raw,JSON.stringify(pendingDrafts)))
+assert.equal(drafts.entries[0].content,'<p>未储存的草稿，请保留我的修改。</p>')
+assert.equal(drafts.entries[0].baseContentFingerprint,createChapterContentFingerprint(converted.novels[classicId].localChapters[0].content))
+assert.equal(drafts.entries[1].baseContentFingerprint,'real-conflict')
+assert.deepEqual(drafts.entries[2],pendingDrafts.entries[2])
+for (const id of ['demo-redcliff','demo-monkey']) {
+  const book = demoBooks.find(b=>b.id===id)
+  assert.deepEqual(book.chapters,book.chapters.map(c=>({...c,title:simplifyChinese(c.title),text:simplifyChinese(c.text)})))
+  assert.deepEqual(snapshot.graphs[id],simplifyClassicValue(snapshot.graphs[id]))
+}
+console.log('PASS simplified classics, edited text, citations, draft recovery, deletion and unrelated-book preservation')
 assert.ok(Buffer.byteLength(api.snapshot(),'utf16le') < 4*1024*1024,'seed fits typical localStorage quota with headroom')
 console.log('PASS migration keeps edits, metadata and deletions; idempotent refresh; storage budget')
 console.log('Content stats:',JSON.stringify(demoBooks.map(b=>({title:b.title,characters:b.chapters.reduce((n,c)=>n+c.text.replace(/\s/g,'').length,0)}))))

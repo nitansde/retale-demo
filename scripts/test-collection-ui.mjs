@@ -1,16 +1,27 @@
 import { chromium, expect } from '@playwright/test'
 import { build } from 'esbuild'
-import { mkdir } from 'node:fs/promises'
+import { mkdir, readFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { resolve } from 'node:path'
 
 const url=(process.env.DEMO_TEST_URL || 'http://localhost:3000/retale-demo').replace(/\/$/,'')
 await mkdir('test-results',{recursive:true})
 const outfile=resolve('test-results/catalog-ui.cjs')
-await build({stdin:{contents:'export {chineseBooks as demoBooks} from "./demo/catalog";',resolveDir:process.cwd()},outfile,bundle:true,platform:'node',format:'cjs',packages:'external',logLevel:'silent'})
-const {demoBooks}=createRequire(import.meta.url)(outfile)
+await build({stdin:{contents:'export {chineseBooks as demoBooks, catalogVersion} from "./demo/catalog"; export {createChapterContentFingerprint} from "./lib/chapter-draft-cache";',resolveDir:process.cwd()},outfile,bundle:true,platform:'node',format:'cjs',packages:'external',logLevel:'silent'})
+const {demoBooks,catalogVersion,createChapterContentFingerprint}=createRequire(import.meta.url)(outfile)
 const browser=await chromium.launch()
 const page=await browser.newPage({viewport:{width:1440,height:1050}})
+if (process.env.DEMO_SAVED_DB_PATH) {
+  const saved = await readFile(process.env.DEMO_SAVED_DB_PATH,'utf8')
+  const chapter = JSON.parse(saved).novels['demo-monkey'].localChapters.at(-1)
+  const draft = {version:1,novelId:'demo-monkey',chapterId:chapter.id,content:'<p>大聖歸來，我的草稿仍在。</p>',wordCount:12,savedAt:Date.now(),baseContentFingerprint:createChapterContentFingerprint(chapter.content)}
+  await page.addInitScript(({saved,draft})=>{
+    if(sessionStorage.getItem('simplified-fixture-loaded')) return
+    sessionStorage.setItem('simplified-fixture-loaded','1')
+    localStorage.setItem('retale.demo.database.v1',saved)
+    localStorage.setItem('retale.chapter-drafts.v1',JSON.stringify({version:1,entries:[draft]}))
+  },{saved,draft})
+}
 page.setDefaultTimeout(20000)
 const errors=[]
 page.on('pageerror',e=>errors.push(e.message))
@@ -48,6 +59,14 @@ try {
     await expect(page.getByTestId('roleplay-message-list')).toContainText(book.scenario.roleplay.responses[1])
     if(book.id==='demo-landlord')await page.screenshot({path:'test-results/collection-roleplay.png',fullPage:true})
     console.log(`PASS online UI: ${book.title} — original prose, graph, What-if, Future Jump, saved roleplay`)
+  }
+  if (process.env.DEMO_SAVED_DB_PATH) {
+    const migrated = await page.evaluate(()=>JSON.parse(localStorage.getItem('retale.demo.database.v1')))
+    expect(migrated.catalogVersion).toBe(catalogVersion)
+    await page.getByTestId('timeline-chapter-row-demo-monkey-ch-4').getByRole('button').first().click()
+    await page.getByTestId('workspace-chapter-view-toggle').getByRole('button',{name:'正文',exact:true}).click()
+    await expect(page.getByTestId('workspace-chapter-reader')).toContainText('大圣归来，我的草稿仍在。')
+    console.log('PASS existing-browser simplification, matching citations and automatic draft recovery')
   }
   await page.setViewportSize({width:390,height:844})
   await page.goto(`${url}/library/`)

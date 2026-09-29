@@ -8,7 +8,7 @@ export const chineseBooks = [...webnovels, ...lightnovels, ...classics];
 export const englishBooks = [...englishSerials, ...englishMysteries, ...englishClassics];
 export const demoBooks = [...chineseBooks, ...englishBooks];
 export const demoBookById = Object.fromEntries(demoBooks.map(book => [book.id, book]));
-export const catalogVersion = 4;
+export const catalogVersion = 5;
 export function bookLocale(id: string): 'zh' | 'en' | undefined {
   if (demoBookById[id]) return demoBookById[id].locale || 'zh';
 }
