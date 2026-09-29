@@ -2,7 +2,7 @@
 
 直接运行 ReTale 当前版本的书库、工作台、阅读/编辑器、图谱、改写/续写、What-if、未来跳跃、角色扮演、知识库、设置、预设兼容库、搜索与写作技巧页面。内置中英文两套独立书库：中文六本、英文六本。英文类型小说独立创作，不是中文故事的翻译。
 
-界面和状态管理来自 ReTale 提交 `444fe4c12b4876c29bb77a188e6afbd8a3b4e6f1`。`upstream-manifest.json` 记录原文件哈希；`npm run verify:upstream` 检查复制后的原版代码没有被改动。不是另写一套类似的 UX。
+界面和状态管理来自 ReTale 提交 `444fe4c12b4876c29bb77a188e6afbd8a3b4e6f1`。`upstream-manifest.json` 记录原文件哈希；`npm run verify:upstream` 校验原版文件及明确记录的定制。按用户要求，四个日期显示位置通过 `demo/display-date.ts` 只显示 `YYYY-MM-DD`，这些小范围修改的哈希与原因列在清单的 `overrides` 中；其余 253 个原版文件保持一致，原始时间戳仍用于排序与保存。不是另写一套类似的 UX。
 
 ## 样书（2026-09-29）
 

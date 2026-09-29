@@ -1,5 +1,7 @@
 "use client"
 
+import { formatDemoDate } from '@/demo/display-date'
+
 import Image from 'next/image'
 import { useState } from 'react'
 import { DialogSurface } from '@/components/ui/DialogSurface'
@@ -112,7 +114,7 @@ export function ProjectCard({
             <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs text-zinc-500">
               <span>{t('library.cardChapterCount', { count: novel.chapterCount })}</span>
               <span>{t('library.cardWordCount', { count: novel.wordCount.toLocaleString() })}</span>
-              <span className="hidden sm:inline">{novel.updatedAt}</span>
+              <span className="hidden sm:inline">{formatDemoDate(novel.updatedAt)}</span>
             </div>
 
             {opening ? (

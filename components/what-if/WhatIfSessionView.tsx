@@ -1,5 +1,7 @@
 "use client"
 
+import { formatDemoDate as formatCreatedAt } from '@/demo/display-date'
+
 import { useEffect, useMemo, useState } from 'react'
 import { ArrowRight, GitBranch, LoaderCircle, RefreshCcw, Sparkles } from 'lucide-react'
 import { formatStoryBranchInstructionPreview } from '@/lib/story-branch-labels'
@@ -32,17 +34,6 @@ function excerptText(detail: WhatIfSessionDetail) {
   return detail.selectedText.trim() || detail.originalText.trim() || ''
 }
 
-function formatCreatedAt(value: string) {
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return value
-  return date.toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
 
 function renderReaderBodyParagraphs(text: string, className?: string) {
   const paragraphs = splitPlainTextParagraphs(text)

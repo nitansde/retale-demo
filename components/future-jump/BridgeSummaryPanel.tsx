@@ -1,22 +1,13 @@
 "use client"
 
+import { formatDemoDate as formatCreatedAt } from '@/demo/display-date'
+
 import { ArrowRight, Clock3, GitBranch, Sparkles } from 'lucide-react'
 import { useI18n } from '@/lib/i18n/provider'
 import { formatStoryBranchInstructionPreview } from '@/lib/story-branch-labels'
 import type { FutureJumpRevisionRecord, FutureJumpRunDetail, FutureMapEvent, OutlineNodeChapterRecord, WhatIfSessionDetail } from '@/lib/story-branch-types'
 import { cn } from '@/lib/utils'
 
-function formatCreatedAt(value: string) {
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return value
-  return date.toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
 
 function buildSourceMetaLabel(sourceType: string | null | undefined) {
   if (!sourceType) return 'unknown'

@@ -259,5 +259,23 @@
     "postcss.config.mjs": "dfac7ac2d86d326a0e5adb024e7943c181393ed17a5fcb8f0315b24c7da6ddde",
     "eslint.config.mjs": "5f9993b8e341343bde936871aa2943d15026a795f57241aead9ed69c90312648",
     "scripts/test-path-safety.mjs": "1129ed66508395452be6a17a289c96e1a266ec78ad705944be22a3794624c767"
+  },
+  "overrides": {
+    "components/library/project-card.tsx": {
+      "sha256": "cbc4a56562e8ec4fe9a485528066e47705c7a55849557316ad97d5e225550e98",
+      "reason": "User-requested date-only display in the demo; retain the upstream layout and stored timestamps."
+    },
+    "components/what-if/WhatIfSessionView.tsx": {
+      "sha256": "caf863ca3641d54a8496c380d97c7cf49a6b5ea7d980b5d86784abc15ce15ea3",
+      "reason": "User-requested date-only display in the demo; retain the upstream layout and stored timestamps."
+    },
+    "components/future-jump/BridgeSummaryPanel.tsx": {
+      "sha256": "829320ad98c235ba59fdf75b48a7a308242f51ba8e59fe969e469b8763a97856",
+      "reason": "User-requested date-only display in the demo; retain the upstream layout and stored timestamps."
+    },
+    "app/task/task-page-client.tsx": {
+      "sha256": "3a770c927183d19b051d5ccbc96fb71a573175f46fdb645f0f79a32bd9b73aa9",
+      "reason": "User-requested date-only display in the demo; retain the upstream layout and stored timestamps."
+    }
   }
 }

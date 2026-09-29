@@ -1,5 +1,7 @@
 "use client"
 
+import { formatDemoDate } from '@/demo/display-date'
+
 import { formatProgressMessage } from '@/lib/i18n/progress-message'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
@@ -22,17 +24,6 @@ type BackgroundTask = {
   errorMessage: string | null
 }
 
-function formatDate(value: string | Date | null | undefined, locale: string) {
-  if (!value) return null
-
-  const date = value instanceof Date ? value : new Date(value)
-  if (Number.isNaN(date.getTime())) return null
-
-  return new Intl.DateTimeFormat(locale, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(date)
-}
 
 function formatProgress(progress: number | null | undefined) {
   if (typeof progress !== 'number' || Number.isNaN(progress)) {
@@ -66,10 +57,9 @@ function TaskMetaRow({ label, value }: { label: string; value: string }) {
 }
 
 export function TaskPageClient() {
-  const { locale, t } = useI18n()
+  const { t } = useI18n()
   const [tasks, setTasks] = useState<BackgroundTask[]>([])
   const [novelId, setNovelId] = useState('')
-  const browserLocale = locale === 'zh' ? 'zh-CN' : 'en'
 
   useEffect(() => {
     const currentNovelId = readBrowserWorkspaceSession().currentNovelId
@@ -210,8 +200,8 @@ export function TaskPageClient() {
                   <dl className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                     <TaskMetaRow label={t('task.novel')} value={renderNovelLine(task)} />
                     <TaskMetaRow label={t('task.branch')} value={renderBranchLine(task)} />
-                    <TaskMetaRow label={t('task.updated')} value={formatDate(task.updatedAt, browserLocale) ?? t('task.unknown')} />
-                    <TaskMetaRow label={t('task.created')} value={formatDate(task.createdAt, browserLocale) ?? t('task.unknown')} />
+                    <TaskMetaRow label={t('task.updated')} value={formatDemoDate(task.updatedAt) || t('task.unknown')} />
+                    <TaskMetaRow label={t('task.created')} value={formatDemoDate(task.createdAt) || t('task.unknown')} />
                     <TaskMetaRow label={t('task.status')} value={formatStatus(task.status)} />
                     <TaskMetaRow label={t('task.jobType')} value={formatJobType(task.jobType)} />
                   </dl>
