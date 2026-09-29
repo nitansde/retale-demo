@@ -276,6 +276,18 @@
     "app/task/task-page-client.tsx": {
       "sha256": "3a770c927183d19b051d5ccbc96fb71a573175f46fdb645f0f79a32bd9b73aa9",
       "reason": "User-requested date-only display in the demo; retain the upstream layout and stored timestamps."
+    },
+    "components/timeline/SwipeDeleteRow.tsx": {
+      "sha256": "5215a38c6f61d257e9d1019799f1b0f35236a8202f19572ef1caaadf9981925b",
+      "reason": "User-requested directory UX fix: contextual delete actions without a permanent column, clean card backgrounds, and keyboard focus affordances; preserve mobile swipe deletion."
+    },
+    "components/timeline/ChapterTimelineCard.tsx": {
+      "sha256": "8c1cbc208d89353d0bb70510d7a38cce4177cc5b3ab7ac648e794ed30cc99921",
+      "reason": "User-requested directory UX fix: contextual delete actions without a permanent column, clean card backgrounds, and keyboard focus affordances; preserve mobile swipe deletion."
+    },
+    "components/timeline/BranchBlock.tsx": {
+      "sha256": "457b8efa79f041f5854ca5db8ddade3acd5b69581e47c4135d644bd2f2e42ef9",
+      "reason": "User-requested directory UX fix: contextual delete actions without a permanent column, clean card backgrounds, and keyboard focus affordances; preserve mobile swipe deletion."
     }
   }
 }

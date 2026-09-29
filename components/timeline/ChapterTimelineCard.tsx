@@ -43,12 +43,12 @@ export const ChapterTimelineCard = forwardRef<HTMLButtonElement, {
             aria-current={chapterSelected ? "page" : undefined}
             onClick={props.onSelectChapter}
             className={cn(
-              'min-h-16 min-w-0 flex-1 border-l-2 px-3 py-2.5 text-left transition lg:rounded-[22px] lg:border lg:py-3',
+              'min-h-16 min-w-0 flex-1 border-l-2 px-3 py-2.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-400 lg:rounded-[22px] lg:border lg:py-3',
               chapterSelected ? 'border-violet-400 bg-violet-500/10 lg:border-violet-400/30' : 'border-transparent hover:bg-overlay/[0.04] lg:border-line/8 lg:bg-shade/20',
               props.highlighted && !chapterSelected && 'border-line/30 lg:border-line/30'
             )}
           >
-            <div className="flex items-center justify-between gap-2 text-xs text-zinc-400">
+            <div className="flex items-center justify-between gap-2 pr-7 text-xs text-zinc-400">
               <span>{t('workspace.timeline.chapterLabel', { count: props.chapter.chapterNo })}</span>
               <span className="lg:hidden">{t('workspace.wordCount', { count: props.chapter.wordCount })}</span>
             </div>
@@ -77,11 +77,11 @@ export const ChapterTimelineCard = forwardRef<HTMLButtonElement, {
                     data-navigation-target={props.navigationTargetChapterId === branch.id ? 'true' : undefined}
                     onClick={() => props.onSelectBranchChapter(branch)}
                     className={cn(
-                      'min-w-0 flex-1 rounded-2xl border px-3 py-3 text-left transition',
+                      'min-w-0 flex-1 rounded-2xl border px-3 py-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-400',
                       branchSelected ? 'border-fuchsia-400/30 bg-fuchsia-500/12' : 'border-line/8 bg-shade/20 hover:bg-overlay/[0.06]'
                     )}
                   >
-                    <p className="text-[11px] uppercase tracking-[0.16em] text-zinc-500">{t('workspace.timeline.branchLabel', { label: branch.branchLabel ?? 'B' })}</p>
+                    <p className="pr-7 text-[11px] uppercase tracking-[0.16em] text-zinc-500">{t('workspace.timeline.branchLabel', { label: branch.branchLabel ?? 'B' })}</p>
                     <p className="mt-1 break-words text-sm font-medium text-zinc-100">{branch.title}</p>
                   </button>
                 </SwipeDeleteRow>

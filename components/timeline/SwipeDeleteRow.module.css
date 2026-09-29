@@ -1,0 +1,17 @@
+/* Keep the action in the tab order without showing it after a mouse click. */
+.action {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.row:has(:focus-visible) .action {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (hover: hover) {
+  .row:hover .action {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}

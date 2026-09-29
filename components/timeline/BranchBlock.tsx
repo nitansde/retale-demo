@@ -69,7 +69,7 @@ export const BranchBlock = forwardRef<HTMLButtonElement, {
         onFocus={() => props.onFocusChange(true)}
         onBlur={() => props.onFocusChange(false)}
           className={cn(
-            'min-w-0 flex-1 rounded-[22px] border px-3 py-3 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] transition disabled:cursor-not-allowed disabled:opacity-60',
+            'min-w-0 flex-1 rounded-[22px] border px-3 py-3 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-400 disabled:cursor-not-allowed disabled:opacity-60',
             isWhatIfLike
               ? 'border-violet-300/20 bg-[linear-gradient(135deg,rgba(109,40,217,0.22),rgb(var(--raised-rgb)/0.94))] text-zinc-100 hover:border-violet-300/30 hover:bg-[linear-gradient(135deg,rgba(124,58,237,0.28),rgb(var(--raised-rgb)/0.98))]'
               : isRoleplay
@@ -81,7 +81,7 @@ export const BranchBlock = forwardRef<HTMLButtonElement, {
       >
         <div className="flex items-start gap-3">
           <div className="min-w-0 flex-1">
-            <p className={cn('text-[11px] uppercase tracking-[0.16em]', isWhatIfLike ? 'text-fuchsia-100/70' : isRoleplay ? 'text-emerald-100/75' : 'text-sky-100/75')}>
+            <p className={cn('pr-7 text-[11px] uppercase tracking-[0.16em]', isWhatIfLike ? 'text-fuchsia-100/70' : isRoleplay ? 'text-emerald-100/75' : 'text-sky-100/75')}>
               {branchKindLabel}
             </p>
             <div className="mt-1 flex min-w-0 items-baseline justify-between gap-2">

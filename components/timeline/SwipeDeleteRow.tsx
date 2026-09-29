@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type ComponentPropsWithoutRef, type Pointe
 import { LoaderCircle, Trash2 } from 'lucide-react'
 import { useI18n } from '@/lib/i18n/provider'
 import { cn } from '@/lib/utils'
+import styles from './SwipeDeleteRow.module.css'
 
 const DELETE_REVEAL_WIDTH = 80
 
@@ -58,7 +59,7 @@ export function SwipeDeleteRow({ children, onDelete, deleteLabel, deleting, clas
       {...rowProps}
       ref={rowRef}
       data-delete-revealed={deleteRevealed ? 'true' : 'false'}
-      className={cn('relative flex min-w-0 items-start overflow-hidden rounded-xl lg:gap-2 lg:overflow-visible', className)}
+      className={cn(styles.row, 'relative flex min-w-0 items-start overflow-hidden rounded-xl lg:overflow-visible', className)}
       onKeyDown={(event) => {
         if (event.key === 'Escape' && deleteRevealed) {
           event.stopPropagation()
@@ -67,7 +68,7 @@ export function SwipeDeleteRow({ children, onDelete, deleteLabel, deleting, clas
       }}
     >
       <div
-        className={cn('relative z-10 flex min-w-0 flex-1 touch-pan-y items-start gap-1 bg-raised lg:!transform-none', !dragging && 'transition-transform duration-150 motion-reduce:transition-none')}
+        className={cn('relative z-10 flex min-w-0 flex-1 touch-pan-y items-start gap-1 rounded-[inherit] bg-raised lg:bg-transparent', !dragging && 'transition-transform duration-150 motion-reduce:transition-none')}
         style={{ transform: `translateX(${offset}px)` }}
         onPointerDown={(event) => {
           suppressClickRef.current = false
@@ -107,10 +108,15 @@ export function SwipeDeleteRow({ children, onDelete, deleteLabel, deleting, clas
         onClick={() => { setOffset(0); onDelete() }}
         aria-label={deleteLabel}
         title={deleteLabel}
-        className={cn('absolute inset-y-0 right-0 w-20 shrink-0 flex-col items-center justify-center gap-1 rounded-xl border border-rose-400/20 bg-rose-500/15 p-2 text-rose-200 transition hover:bg-rose-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-rose-300/70 disabled:cursor-not-allowed disabled:opacity-60 lg:static lg:inline-flex lg:min-h-11 lg:w-11', deleteRevealed ? 'flex' : 'hidden')}
+        className={cn(
+          'absolute flex shrink-0 flex-col items-center justify-center gap-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-rose-300/70 disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none',
+          deleteRevealed
+            ? 'inset-y-0 right-0 w-20 rounded-xl border border-rose-400/20 bg-rose-500/15 p-2 text-rose-200 hover:bg-rose-500/25'
+            : [styles.action, 'right-2 top-2 z-20 h-7 w-7 rounded-lg p-1 text-zinc-500 hover:bg-rose-500/15 hover:text-rose-300']
+        )}
       >
         {deleting ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-        <span className="text-xs lg:hidden">{t('workspace.timeline.deleteAction')}</span>
+        {deleteRevealed ? <span className="text-xs">{t('workspace.timeline.deleteAction')}</span> : null}
       </button> : null}
     </div>
   )
