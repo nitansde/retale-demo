@@ -18,7 +18,7 @@ page.on('response',r=>{if(r.status()>=400)errors.push(`${r.status()} ${r.url()}`
 try {
   await page.goto(`${url}/`)
   await expect(page.getByRole('heading',{name:demoBooks[0].title,exact:true})).toBeVisible()
-  await expect(page.locator('article')).toHaveCount(8)
+  await expect(page.locator('article')).toHaveCount(6)
   await expect(page.locator('article img')).toHaveCount(6)
   await expect.poll(()=>page.locator('article img').evaluateAll(imgs=>imgs.every(img=>img.complete&&img.naturalWidth>0))).toBe(true)
   await page.screenshot({path:'test-results/collection-library.png',fullPage:true})
@@ -57,7 +57,7 @@ try {
   await page.getByRole('button').filter({has:page.getByRole('heading',{name:demoBooks[3].title,exact:true})}).click()
   await expect(page.getByTestId('workspace-mobile-toolbar')).toBeVisible()
   if(errors.length)throw Error(errors.join('\n'))
-  console.log('PASS six covers, eight books, long-title mobile layout, no failed HTTP requests or JS errors')
+  console.log('PASS six covers, six books, long-title mobile layout, no failed HTTP requests or JS errors')
 } catch(error) {
   await page.screenshot({path:'test-results/collection-failure.png',fullPage:true})
   console.error(errors)

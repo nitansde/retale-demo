@@ -2,6 +2,7 @@ import { http, passthrough } from "msw";
 import { setupWorker } from "msw/browser";
 import { createDemoApi } from "./api";
 import { getDemoLocale } from "./locale";
+import { retiredNovelIds } from "./catalog";
 import { removeBrowserWorkspaceNovelSession } from "@/lib/browser-preferences";
 import { CHAPTER_DRAFT_CACHE_STORAGE_KEY } from "@/lib/chapter-draft-cache";
 
@@ -15,6 +16,7 @@ export async function startDemo() {
   } catch {
     /* Restricted storage uses memory. */
   }
+  clearNovelBrowserState(new Set(retiredNovelIds));
   const api = createDemoApi(saved, (value) => {
     try {
       localStorage.setItem(storageKey, value);
@@ -64,23 +66,28 @@ export async function startDemo() {
 export async function resetDemo() {
   const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
   const novelIds = new Set([
-    "demo-mist",
-    "demo-star",
+    ...retiredNovelIds,
     ...Object.keys(saved.novels || {}),
   ]);
   localStorage.removeItem(storageKey);
+  clearNovelBrowserState(novelIds);
+}
+
+function clearNovelBrowserState(novelIds: Set<string>) {
   for (const novelId of novelIds) removeBrowserWorkspaceNovelSession(novelId);
-  const rawDrafts = localStorage.getItem(CHAPTER_DRAFT_CACHE_STORAGE_KEY);
-  if (rawDrafts) {
-    const drafts = JSON.parse(rawDrafts);
-    if (Array.isArray(drafts.entries)) {
-      drafts.entries = drafts.entries.filter(
-        (entry: { novelId: string }) => !novelIds.has(entry.novelId),
-      );
-      localStorage.setItem(
-        CHAPTER_DRAFT_CACHE_STORAGE_KEY,
-        JSON.stringify(drafts),
-      );
+  try {
+    const rawDrafts = localStorage.getItem(CHAPTER_DRAFT_CACHE_STORAGE_KEY);
+    if (rawDrafts) {
+      const drafts = JSON.parse(rawDrafts);
+      if (Array.isArray(drafts.entries)) {
+        drafts.entries = drafts.entries.filter(
+          (entry: { novelId: string }) => !novelIds.has(entry.novelId),
+        );
+        localStorage.setItem(
+          CHAPTER_DRAFT_CACHE_STORAGE_KEY,
+          JSON.stringify(drafts),
+        );
+      }
     }
-  }
+  } catch { /* Restricted or malformed draft storage must not prevent loading. */ }
 }

@@ -8,9 +8,11 @@ export const chineseBooks = [...webnovels, ...lightnovels, ...classics];
 export const englishBooks = [...englishSerials, ...englishMysteries, ...englishClassics];
 export const demoBooks = [...chineseBooks, ...englishBooks];
 export const demoBookById = Object.fromEntries(demoBooks.map(book => [book.id, book]));
-export const catalogVersion = 3;
+export const catalogVersion = 4;
 export function bookLocale(id: string): 'zh' | 'en' | undefined {
   if (demoBookById[id]) return demoBookById[id].locale || 'zh';
-  if (id === 'demo-mist' || id === 'demo-star') return 'zh';
 }
 export const introducedVersion = (id: string) => bookLocale(id) === 'en' ? 3 : 2;
+
+// Exact IDs only: visitor imports with matching titles are unrelated.
+export const retiredNovelIds = ['demo-mist', 'demo-star'];

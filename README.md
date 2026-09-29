@@ -1,6 +1,6 @@
 # ReTale · 戏说 Demo
 
-直接运行 ReTale 当前版本的书库、工作台、阅读/编辑器、图谱、改写/续写、What-if、未来跳跃、角色扮演、知识库、设置、预设兼容库、搜索与写作技巧页面。内置中英文两套独立书库：中文八本、英文六本。英文类型小说独立创作，不是中文故事的翻译。
+直接运行 ReTale 当前版本的书库、工作台、阅读/编辑器、图谱、改写/续写、What-if、未来跳跃、角色扮演、知识库、设置、预设兼容库、搜索与写作技巧页面。内置中英文两套独立书库：中文六本、英文六本。英文类型小说独立创作，不是中文故事的翻译。
 
 界面和状态管理来自 ReTale 提交 `444fe4c12b4876c29bb77a188e6afbd8a3b4e6f1`。`upstream-manifest.json` 记录原文件哈希；`npm run verify:upstream` 检查复制后的原版代码没有被改动。不是另写一套类似的 UX。
 
@@ -19,7 +19,7 @@
 
 名著正文保留繁体，不把演示改写冒充原文。来源与固定版本链接见 [sources.txt](public/sources.txt)。选篇在工作台内按 1…N 排序，章节标题保留原书回数。后续正文之外的模拟分支均明确标为“演示原创分支，非原著”。
 
-浏览器旧版数据自动补入新书，保留已有编辑、导入、设置和删除操作；刷新不会重复添加分支。首次升级后手动删除的新书也不会被自动恢复。“重置演示”会恢复完整书库。
+数据版本 4 移除旧演示《雾城来信》《星海回声》及其分支、技巧卡和浏览器草稿。其余样书编辑、用户导入、设置和删除操作保留；刷新不会重复添加分支。首次升级后手动删除的新书也不会被自动恢复。“重置演示”会恢复完整书库。
 
 ## English collection
 
@@ -36,7 +36,7 @@ Use the existing **English** language switch in the library. Six independently a
 
 The four originals use distinct voices: first-person paramedic humour, wary romantic bargaining, a gently comic third-person mystery, and intimate academic horror. These are compact demo episodes, not full-length novels. Each English book has its own cast, relationships, lore, chapter events, graph evidence, writing technique and six seeded branches. English books also use English prompt presets, mock context and roleplay responses. The model remains simulated.
 
-Public-domain text provenance, download checksums and editorial processing are recorded in [sources.txt](public/sources.txt). Original excerpts stay intact; new counterfactual scenes are explicitly labelled. Edition 3 adds only the English books to an existing edition-2 database, preserving edits and intentionally deleted Chinese books. “Reset demo” restores both collections and retains the selected UI language.
+Public-domain text provenance, download checksums and editorial processing are recorded in [sources.txt](public/sources.txt). Original excerpts stay intact; new counterfactual scenes are explicitly labelled. Edition 3 added the English collection. Edition 4 retires the two prototype demos and their associated data while preserving all other books, edits, visitor imports and intentional deletions. “Reset demo” restores both collections and retains the selected UI language.
 
 ## 运行
 

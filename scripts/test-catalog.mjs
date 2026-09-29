@@ -18,7 +18,7 @@ const call = async (path, body) => {
   assert.equal(response.status,200,`${path} returns success`)
   return response.json()
 }
-assert.equal(Object.keys(snapshot.novels).length,14)
+assert.equal(Object.keys(snapshot.novels).length,12)
 for (const book of demoBooks) {
   const novel = snapshot.novels[book.id]
   assert.ok(book.chapters[book.scenario.chapter-1].text.includes(book.scenario.sourceText), `${book.title}: source quote exists`)
@@ -59,32 +59,51 @@ for (const book of demoBooks) {
   }
   console.log(`PASS ${book.title}: ${book.chapters.length} chapters, ${graph.nodes.length} graph nodes, ${graph.edges.length} edges`)
 }
-// A visitor with edited v1 data should receive only new content, never a reset.
-const old = structuredClone(snapshot)
-delete old.catalogVersion
-for (const book of demoBooks) {
-  delete old.novels[book.id]; delete old.graphs[book.id]; delete old.revisions[book.id]
-  delete old.skills[`${book.id}-skill`]
+// Each old catalog version retires the prototypes and all related records without resetting other work.
+const retiredIds = ['demo-mist', 'demo-star'];
+function addRetiredRows(db) {
+  for (const key of retiredIds) {
+    db.novels[key] = {...structuredClone(snapshot.novels['demo-sect']),currentNovelId:key};
+    db.metadata[key] = {author:'Prototype'}; db.revisions[key] = 7;
+    db.graphs[key] = {nodes:[],edges:[]}; db.knowledge[key] = {job:{novelId:key}};
+    db.nodes.push({id:`${key}-node`,novelId:key}); db.details[`${key}-detail`] = {novelId:key};
+    db.skills[`${key}-skill`] = {libraryId:key}; db.jobs[`${key}-job`] = {libraryId:key};
+    db.compressions[JSON.stringify({novelId:key,branchId:`${key}-main`})] = 1;
+    db.presets.novelRewritePresetIds ??= {};
+    db.presets.novelRewritePresetIds[key] = 'retale-default-zh-CN';
+  }
 }
-old.nodes=old.nodes.filter(n=>!demoBooks.some(b=>b.id===n.novelId))
-old.details=Object.fromEntries(Object.entries(old.details).filter(([,d])=>!demoBooks.some(b=>b.id===d.novelId)))
-delete old.novels['demo-star'] // Existing deliberate deletion is preserved.
-old.novels['demo-mist'].localChapters[0].content='<p>访客自己的编辑，不能覆盖。</p>'
-old.metadata['demo-mist']={author:'访客'}
-const before = structuredClone(old.novels['demo-mist'])
-let persisted
-const upgraded = createDemoApi(JSON.stringify(old), value=>{persisted=value})
-const after = JSON.parse(upgraded.snapshot())
-assert.deepEqual(after.novels['demo-mist'],before)
-assert.equal(after.metadata['demo-mist'].author,'访客')
-assert.equal(after.novels['demo-star'],undefined)
-assert.equal(Object.keys(after.novels).length,13)
-assert.equal(after.nodes.length,old.nodes.length+72)
-assert.ok(persisted)
-const rerun = JSON.parse(createDemoApi(upgraded.snapshot()).snapshot())
-assert.equal(rerun.nodes.length,after.nodes.length)
-delete rerun.novels['demo-sect']
-assert.equal(JSON.parse(createDemoApi(JSON.stringify(rerun)).snapshot()).novels['demo-sect'],undefined)
+for (const edition of [1,2,3]) {
+  const old = structuredClone(snapshot)
+  old.catalogVersion = edition
+  const pending = demoBooks.filter(b=>(b.locale==='en'?3:2)>edition)
+  for (const book of pending) {
+    delete old.novels[book.id]; delete old.graphs[book.id]; delete old.revisions[book.id]
+    delete old.skills[`${book.id}-skill`]
+  }
+  old.nodes=old.nodes.filter(n=>!pending.some(b=>b.id===n.novelId))
+  old.details=Object.fromEntries(Object.entries(old.details).filter(([,d])=>!pending.some(b=>b.id===d.novelId)))
+  const keptNodes = old.nodes.length
+  // Same title as a retired demo, but a visitor import has a distinct ID and must survive.
+  old.novels['my-import'] = {...structuredClone(snapshot.novels['demo-sect']),currentNovelId:'my-import'}
+  old.novels['my-import'].localNovels[0].title='雾城来信'
+  old.novels['my-import'].localChapters[0].content='<p>访客自己的编辑，不能覆盖。</p>'
+  old.metadata['my-import']={author:'访客'}
+  addRetiredRows(old)
+  let persisted
+  const upgraded = createDemoApi(JSON.stringify(old),value=>{persisted=value})
+  const after = JSON.parse(upgraded.snapshot())
+  assert.deepEqual(after.novels['my-import'],old.novels['my-import'])
+  assert.equal(after.metadata['my-import'].author,'访客')
+  assert.ok(retiredIds.every(id=>!upgraded.snapshot().includes(id)))
+  assert.equal(Object.keys(after.novels).length,13)
+  assert.equal(after.nodes.length,keptNodes+pending.length*6)
+  assert.ok(persisted)
+  const rerun = JSON.parse(createDemoApi(upgraded.snapshot()).snapshot())
+  assert.deepEqual(rerun,after)
+  delete rerun.novels['demo-sect']
+  assert.equal(JSON.parse(createDemoApi(JSON.stringify(rerun)).snapshot()).novels['demo-sect'],undefined)
+}
 // Upgrade an edited v2 collection, including intentional deletions, to bilingual v3.
 const v2 = structuredClone(snapshot)
 v2.catalogVersion = 2
@@ -124,7 +143,7 @@ const edited = await bilingual.handle(new Request('http://demo.test/api/chapters
 assert.equal(edited.status,200)
 assert.equal((await request('novels/demo-safe-room')).localChapters[0].wordCount,4)
 locale = 'zh'
-assert.equal((await request('novels')).novels.length,chineseBooks.length+2) // One deleted, one imported.
+assert.equal((await request('novels')).novels.length,chineseBooks.length) // One deleted, one imported.
 assert.ok((await request('novels')).novels.every(n=>!englishBooks.some(b=>b.id===n.id)))
 locale = 'en'
 assert.equal((await request('novels')).novels.length,7)

@@ -53,7 +53,7 @@ try {
   // The real UI switch changes collections immediately and preserves both languages' work.
   await page.goto(`${url}/library/`)
   await page.getByTestId('app-language-option-zh').click()
-  await expect(page.locator('article')).toHaveCount(8)
+  await expect(page.locator('article')).toHaveCount(6)
   await expect(page.getByRole('heading',{name:demoBooks[0].title,exact:true})).toHaveCount(0)
   await page.getByTestId('app-language-option-en').click()
   await expect(page.locator('article')).toHaveCount(6)

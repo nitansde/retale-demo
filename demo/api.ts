@@ -1,4 +1,4 @@
-import { demoBooks, demoBookById, catalogVersion, bookLocale, introducedVersion } from "./catalog";
+import { demoBooks, demoBookById, catalogVersion, bookLocale, introducedVersion, retiredNovelIds } from "./catalog";
 import { makeEnglishPresets } from "./english-presets";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Only the HTTP boundary is dynamic. Pages, stores, schemas and UI are upstream ReTale.
@@ -48,9 +48,7 @@ const branchId = (novelId: string) => `${novelId}-main`;
 
 function emptyDatabase(): Database {
   const novels = {
-    ...Object.fromEntries(demoBooks.map(book => [book.id, makeNovel(book.id, book.title)])),
-    "demo-mist": makeNovel("demo-mist", "雾城来信"),
-    "demo-star": makeNovel("demo-star", "星海回声"),
+    ...Object.fromEntries(demoBooks.map(book => [book.id, makeNovel(book.id)])),
   };
   return {
     version: 1,
@@ -71,8 +69,6 @@ function emptyDatabase(): Database {
     englishPresets: makeEnglishPresets(),
     skills: {
       ...Object.fromEntries(demoBooks.map(book => [`${book.id}-skill`, makeSkill(`${book.id}-skill`, book.skill.title, book.id)])),
-      "demo-skill": makeSkill(),
-      "demo-skill-2": makeSkill("demo-skill-2", "用环境推进悬念"),
     },
     materials: [],
   };
@@ -100,12 +96,29 @@ export function createDemoApi(
   } catch {
     /* An invalid browser snapshot is replaced with the fictional seed. */
   }
+  // Retire the two prototype stories from existing snapshots, including their dependent data.
+  const retired = new Set(retiredNovelIds);
+  for (const novelId of retired) {
+    for (const table of [db.novels, db.metadata, db.revisions, db.graphs, db.knowledge]) delete table[novelId];
+    for (const library of [db.presets, db.englishPresets]) {
+      if (library?.novelRewritePresetIds) delete library.novelRewritePresetIds[novelId];
+    }
+  }
+  db.nodes = db.nodes.filter(node => !retired.has(node.novelId));
+  for (const [key, detail] of Object.entries(db.details)) if (retired.has(detail.novelId)) delete db.details[key];
+  for (const [key, skill] of Object.entries(db.skills)) if (retired.has(skill.libraryId)) delete db.skills[key];
+  for (const [key, job] of Object.entries(db.jobs)) {
+    if (retired.has(job.novelId) || retired.has(job.libraryId) || retired.has(job.card?.libraryId)) delete db.jobs[key];
+  }
+  for (const scope of Object.keys(db.compressions)) {
+    try { if (retired.has(JSON.parse(scope).novelId)) delete db.compressions[scope]; } catch { /* Preserve unrelated keys. */ }
+  }
   // Add the new collection once; retain edits, imports, preferences and intentional deletions.
   const seedIds = restored ? [] : Object.keys(db.novels);
   if (restored && (db.catalogVersion || 1) < catalogVersion) {
     for (const book of demoBooks.filter(book => introducedVersion(book.id) > (db.catalogVersion || 1))) {
       if (!db.novels[book.id]) {
-        db.novels[book.id] = makeNovel(book.id, book.title);
+        db.novels[book.id] = makeNovel(book.id);
         db.graphs[book.id] = makeGraph(db.novels[book.id]);
         db.revisions[book.id] = 1;
         seedIds.push(book.id);
@@ -671,7 +684,7 @@ export function createDemoApi(
         url.searchParams.get("novelId") ||
         (parts[1] === "novels" ? parts[2] : "") ||
         db.details[parts[3] || parts[2]]?.novelId ||
-        (getLocale() === "en" ? "demo-safe-room" : "demo-mist"),
+        (getLocale() === "en" ? "demo-safe-room" : "demo-sect"),
     );
     const novel = db.novels[novelId];
     const scene = scenarioFor(novelId);
@@ -1243,7 +1256,7 @@ export function createDemoApi(
       }
       if (method === "POST") {
         const sourceNovelId = body.sourceRefs?.find((source: Row) => source.sourceType === 'LIBRARY')?.sourceId
-          || (parts[1] === 'material-libraries' ? parts[2] : getLocale() === 'en' ? 'demo-safe-room' : 'demo-mist');
+          || (parts[1] === 'material-libraries' ? parts[2] : getLocale() === 'en' ? 'demo-safe-room' : 'demo-sect');
         const card = cardId
           ? db.skills[cardId]
           : makeSkill(
