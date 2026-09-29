@@ -38,6 +38,16 @@ The four originals use distinct voices: first-person paramedic humour, wary roma
 
 Public-domain text provenance, download checksums and editorial processing are recorded in [sources.txt](public/sources.txt). Original excerpts stay intact; new counterfactual scenes are explicitly labelled. Edition 3 added the English collection. Edition 4 retires the two prototype demos and their associated data while preserving all other books, edits, visitor imports and intentional deletions. “Reset demo” restores both collections and retains the selected UI language.
 
+## 随章节推进的知识库
+
+12 本样书的 70 章共配有 589 条人物、关系与设定的阶段记录。工作台现有的章节选择决定“截至本章结束”的知识：未出现的人物、尚未揭晓的身份和未来事件不会提前显示；切回前章会恢复当时状态，而不是只在最终资料上累加条目。
+
+例如，《西游记》选篇第 1—4 章的悟空依次是获空衔的大圣、反天归山者、被擒者和五行山下的囚者；《A Familiar Kind of Murder》的 Dr Fenn 在证据出现前只是医生或嫌疑人；Ada 的名字直到第三章档案揭晓才出现。人物卡、世界设定、事件、提纲、关系图和生成上下文使用同一份章节投影。每个阶段的证据取自当前保存的正文，图谱附准确章号与行号。
+
+主线生成上下文不混入其它模拟分支。分支继承锚点章的主线知识，其自身历史另列于生成历史中。早期知识卡的保存不会覆盖后续资料；知识手动修改从当前章开始保留，旧浏览器数据、正文编辑和草稿无需重置。全文检索与“未来跳跃”的未来事件地图仍可主动查看后文。
+
+这是人工编写的逐章模拟提取，不是实时模型分析。更改正文后，缺少原文依据的阶段会被跳过；不会自动理解并为新增剧情写出新知识。
+
 ## 运行
 
 ```sh
@@ -67,6 +77,9 @@ NEXT_PUBLIC_BASE_PATH=/retale-demo npm run build
 - `demo/catalog/classics.ts`：名著说明与演示分支；`public-domain.json`：简体公版正文快照，附原始版本链接及转换说明。
 - `demo/catalog/english-serials.ts`、`english-mysteries.ts`：独立英文原创；`english-classics.ts`、`english-public-domain.json`：英文名著与演示分支。
 - `npm run test:english-ui`：英文六书、真实语言切换、编辑保留、技巧卡与移动端验证。
+- `demo/catalog/progression-*.ts`、`demo/temporal-knowledge.ts`：逐章事实、原文依据与时间投影。
+- `npm run test:temporal`：全 70 章投影、引用、剧透边界、上下文、往返切章、局部保存和分支隔离。
+- `npm run test:temporal-ui`：原版知识栏与图谱的中英文切章、身份揭晓和旧浏览器恢复。
 - `npm run test:catalog`：内容引用、图谱证据、各书生成/跳跃、旧版数据迁移与存储容量。
 - `npm test`：原工作台交互回归；`npm run test:collection-ui`：新书入口、分支、角色对话与移动端。
 - `scripts/import-public-domain.py`：手动重新获取维基文库原文；网站构建与运行均不依赖该站在线。

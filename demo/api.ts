@@ -1,6 +1,8 @@
 import { demoBooks, demoBookById, catalogVersion, bookLocale, introducedVersion, retiredNovelIds } from "./catalog";
 import { simplifiedClassicIds, simplifyClassicValue } from "./simplified-classics";
 import { makeEnglishPresets } from "./english-presets";
+import { chapterCutoff, projectKnowledge, projectGraph, emptyProjection, knowledgeKeys, recordKnowledgeEdits } from "./temporal-knowledge";
+import type { KnowledgeProjection, KnowledgeEdit, GraphEdits } from "./temporal-knowledge";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Only the HTTP boundary is dynamic. Pages, stores, schemas and UI are upstream ReTale.
 import {
@@ -35,6 +37,8 @@ type Database = {
   jobs: Record<string, Row>;
   knowledge: Record<string, Row>;
   graphs: Record<string, ReturnType<typeof makeGraph>>;
+  temporalEdits?: Record<string, KnowledgeEdit[]>;
+  graphEdits?: Record<string, GraphEdits>;
   compressions: Record<string, number>;
   settings: ReturnType<typeof makeSettings>;
   presets: ReturnType<typeof createDefaultPresetCompatLibrary>;
@@ -81,6 +85,7 @@ export function createDemoApi(
   getLocale: () => "zh" | "en" = () => "zh",
 ) {
   let db = emptyDatabase();
+  const originalGraphSeeds = db.graphs;
   let restored = false;
   try {
     const parsed = saved ? JSON.parse(saved) : null;
@@ -100,7 +105,7 @@ export function createDemoApi(
   // Retire the two prototype stories from existing snapshots, including their dependent data.
   const retired = new Set(retiredNovelIds);
   for (const novelId of retired) {
-    for (const table of [db.novels, db.metadata, db.revisions, db.graphs, db.knowledge]) delete table[novelId];
+    for (const table of [db.novels, db.metadata, db.revisions, db.graphs, db.knowledge, db.temporalEdits || {}, db.graphEdits || {}]) delete table[novelId];
     for (const library of [db.presets, db.englishPresets]) {
       if (library?.novelRewritePresetIds) delete library.novelRewritePresetIds[novelId];
     }
@@ -343,7 +348,7 @@ export function createDemoApi(
       sourceSelectedLineEnd: null,
       messages: [],
       characterOptions:
-        db.novels[novelId]?.localCharacters.map((c) => ({
+        projectKnowledge(db.novels[novelId],chapterNo,db.temporalEdits?.[novelId]).localCharacters.map((c) => ({
           name: c.name,
           protagonist: c.importanceTier === "protagonist",
         })) || [],
@@ -476,23 +481,60 @@ export function createDemoApi(
     };
   }
 
+  const selectedCutoffs = new Map<string, number>();
+  const servedKnowledge = new Map<string, { cutoff: number; projection: KnowledgeProjection }>();
+  function cutoffFor(novelId: string, query: Row = {}) {
+    const nodeId = query.branchContextNodeId || query.sourceContext?.branchContextNodeId;
+    const branch = db.nodes.find(n => n.novelId === novelId && (n.id === nodeId || (query.roleplaySessionId && n.roleplaySessionId === query.roleplaySessionId)));
+    return chapterCutoff(db.novels[novelId], branch?.anchorChapterNo || query.asOfChapter || query.chapterNo || query.sourceChapterNo || query.sourceContext?.chapterNo || selectedCutoffs.get(novelId), branch ? undefined : query.chapterId || query.sourceChapterId);
+  }
+  function projectionFor(novelId: string, cutoff: number) {
+    return db.knowledge[novelId]?.deleted ? emptyProjection() : projectKnowledge(db.novels[novelId],cutoff,db.temporalEdits?.[novelId]);
+  }
+  function graphFor(novelId: string, cutoff: number) {
+    const legacy: GraphEdits = {};
+    // Carry explicit graph reviews from older snapshots onto the matching stage;
+    // untouched final-book seed descriptions never override temporal facts.
+    for (const edge of db.graphs[novelId]?.edges || []) {
+      const original = originalGraphSeeds[novelId]?.edges.find(e => e.id === edge.id);
+      if (!original) continue;
+      const patch = Object.fromEntries(["label","description","linkType","polarity","strength","includeInPrompt","status"]
+        .filter(key => (edge as Row)[key] !== (original as Row)[key]).map(key => [key,(edge as Row)[key]]));
+      if (typeof (edge as Row).includeByDefault === "boolean") patch.includeInPrompt = (edge as Row).includeByDefault;
+      if (!Object.keys(patch).length) continue;
+      const at = original.validFromChapter;
+      const stageEdge = projectGraph(db.novels[novelId],at,projectionFor(novelId,at)).edges.find(e => e.source === original.source && e.target === original.target);
+      if (stageEdge) legacy[stageEdge.id] = patch;
+    }
+    return projectGraph(db.novels[novelId],cutoff,projectionFor(novelId,cutoff),{...legacy,...db.graphEdits?.[novelId]});
+  }
+  function rememberProjection(novelId: string, cutoff: number, projection: KnowledgeProjection) {
+    selectedCutoffs.set(novelId,cutoff);
+    servedKnowledge.set(novelId,{cutoff,projection:structuredClone(projection)});
+  }
+
   function preview(novelId: string, body: Row) {
-    const scene = scenarioFor(novelId);
-    const novel = db.novels[novelId] || Object.values(db.novels)[0];
-    const chapter =
-      novel?.localChapters.find((c) => c.id === body.chapterId) ||
-      novel?.localChapters[2] ||
-      novel?.localChapters[0];
+    const novel = db.novels[novelId];
+    const cutoff = cutoffFor(novelId,body);
+    const chapter = novel?.localChapters.find(c => c.order === cutoff);
+    const projection = projectionFor(novelId,cutoff);
+    const graph = graphFor(novelId,cutoff);
     const scope = {
       novelId,
       branchId: body.branchId || branchId(novelId),
-      ...(body.branchContextNodeId
-        ? { branchContextNodeId: body.branchContextNodeId }
-        : {}),
-      ...(body.roleplaySessionId
-        ? { roleplaySessionId: body.roleplaySessionId }
-        : {}),
+      ...(body.branchContextNodeId ? { branchContextNodeId: body.branchContextNodeId } : {}),
+      ...(body.roleplaySessionId ? { roleplaySessionId: body.roleplaySessionId } : {}),
     };
+    // Only this branch's ancestry is history. Unselected prewritten alternatives
+    // (including later chapters) must never become mainline facts or prompts.
+    const history: Row[] = [];
+    let branch = db.nodes.find(n => n.novelId === novelId && (n.id === body.branchContextNodeId || (body.roleplaySessionId && n.roleplaySessionId === body.roleplaySessionId)));
+    const visited = new Set<string>();
+    while (branch && !visited.has(branch.id)) {
+      visited.add(branch.id);
+      if (branch.anchorChapterNo <= cutoff) history.unshift(branch);
+      branch = db.nodes.find(n => n.novelId === novelId && n.id === branch?.parentNodeId);
+    }
     const disabled =
       body.disabledBlockIds ||
       body.roleplayTurn?.generationOptions?.disabledBlockIds ||
@@ -507,7 +549,7 @@ export function createDemoApi(
         content:
           body.selectedText ||
           (chapter && htmlToPlainText(chapter.content)) ||
-          scene.sourceText,
+          "",
       },
       {
         id: "characters",
@@ -516,9 +558,8 @@ export function createDemoApi(
         required: false,
         priority: "high",
         content:
-          novel?.localCharacters
-            .map((c) => `${c.name}：${c.note}`)
-            .join("\n") || "",
+          [...projection.localCharacters.map(c => `${c.name}: ${c.role}. ${c.note}`),
+            ...graph.edges.filter(e => e.includeInPrompt).map(e => `${e.label}: ${e.description}`)].join("\n"),
       },
       {
         id: "history",
@@ -526,7 +567,13 @@ export function createDemoApi(
         enabled: !disabled.includes("history"),
         required: false,
         priority: "medium",
-        content: scene.rewriteText,
+        content: history.map(n => n.currentText || n.latestText || "").join("\n\n"),
+      },
+      {
+        id: "world", label: copy("已知设定与事件", "Established rules and events", novelId),
+        enabled: !disabled.includes("world"), required: false, priority: "high",
+        content: [...projection.localWorldEntries.map(w => `${w.title}: ${w.content}`),
+          ...projection.localTimelineEvents.map(e => `${e.title}: ${e.summary}`)].join("\n"),
       },
     ];
     const promptBlocks = blocks.map((b) => ({ ...b, trimmed: false }));
@@ -542,20 +589,12 @@ export function createDemoApi(
       novelId,
       branchId: scope.branchId,
       chapterId: chapter?.id,
-      chapterNo: chapter?.order || 3,
+      chapterNo: cutoff,
       chapterTitle: chapter?.title,
       warnings: [],
       promptBlocks,
       assembledContext: userPrompt,
-      graphContext: db.graphs[novelId] || {
-        nodes: [],
-        edges: [],
-        seedEntities: [],
-        status: "ready",
-        warnings: [],
-        contextText: "",
-        tokenEstimate: 0,
-      },
+      graphContext: graph,
       lanceEvidence: chapter
         ? [
             {
@@ -565,7 +604,7 @@ export function createDemoApi(
               chapterId: chapter.id,
               chapterNo: chapter.order,
               lineStart: 1,
-              lineEnd: 3,
+              lineEnd: htmlToPlainText(chapter.content).split("\n").length,
               title: chapter.title,
               sourceLabel: copy("原文", "Original text", novelId),
               text: htmlToPlainText(chapter.content),
@@ -573,8 +612,8 @@ export function createDemoApi(
             },
           ]
         : [],
-      tokenEstimate: 1280,
-      contextSnapshotId: "demo-context",
+      tokenEstimate: Math.ceil((systemPrompt.length + userPrompt.length) / 3),
+      contextSnapshotId: `demo-context-${novelId}-${cutoff}-${body.branchContextNodeId || "main"}`,
       systemPrompt,
       userPrompt,
       requestMessages: [
@@ -582,11 +621,11 @@ export function createDemoApi(
         { role: "user", content: userPrompt },
       ],
       writingSkillRecords: [],
-      compression: compression(scope),
+      compression: { ...compression(scope), summary: null, totalChapters: history.length, compressedChapters: 0, tokenEstimate: Math.ceil(history.reduce((sum,n) => sum + (n.currentText || "").length,0)/3), chapters: history.map(n => ({label:n.title,tokenEstimate:Math.ceil((n.currentText || "").length/3)})) },
     };
   }
 
-  function knowledge(novelId: string) {
+  function knowledge(novelId: string, cutoff: number) {
     const novel = db.novels[novelId];
     const count = novel?.localChapters.length || 0;
     const state = db.knowledge[novelId] || {};
@@ -598,11 +637,8 @@ export function createDemoApi(
     };
     return {
       ok: true,
-      localOutlines: novel?.localOutlines || [],
-      localCharacters: novel?.localCharacters || [],
-      localCharacterRelations: novel?.localCharacterRelations || [],
-      localWorldEntries: novel?.localWorldEntries || [],
-      localTimelineEvents: novel?.localTimelineEvents || [],
+      ...projectionFor(novelId, cutoff),
+      asOfChapter: cutoff,
       knowledgeRebuildStatus: state.job || null,
       hanlpCacheSnapshot: { status: state.hanlpDeleted ? "empty" : "ready" },
       knowledgeStatusOverview: {
@@ -763,16 +799,15 @@ export function createDemoApi(
     }
     if (parts[1] === "novels" && parts[2]) {
       if (!novel) return json({ ok: false, error: "Novel not found" }, 404);
-      if (method === "GET")
-        return json(
-          {
-            ...novel,
-            workspaceRevision: db.revisions[novelId] || 1,
-            revisionNovelId: novelId,
-          },
-          200,
-          revisionHeaders(novelId),
-        );
+      if (method === "GET") {
+        const cutoff = cutoffFor(novelId,Object.fromEntries(url.searchParams));
+        const projection = projectionFor(novelId,cutoff);
+        rememberProjection(novelId,cutoff,projection);
+        return json({ ...novel, ...projection,
+          currentChapterId: novel.localChapters.find(c => c.order === cutoff)?.id || novel.currentChapterId,
+          workspaceRevision: db.revisions[novelId] || 1, revisionNovelId: novelId,
+        }, 200, revisionHeaders(novelId));
+      }
       if (method === "DELETE") {
         delete db.novels[novelId];
         db.nodes = db.nodes.filter((n) => n.novelId !== novelId);
@@ -817,11 +852,19 @@ export function createDemoApi(
               : {}),
           }),
         );
+        const served = servedKnowledge.get(novelId);
+        const cutoff = served?.cutoff || cutoffFor(novelId,{chapterId:body.currentChapterId});
+        const changes = recordKnowledgeEdits(served?.projection || projectionFor(novelId,cutoff),body,cutoff);
+        if (changes.length) {
+          db.temporalEdits ??= {};
+          db.temporalEdits[novelId] = [...db.temporalEdits[novelId] || [],...changes];
+        }
         db.novels[novelId] = normalizeWorkspaceState({
-          ...novel,
-          ...body,
+          ...novel, ...body,
+          ...Object.fromEntries(knowledgeKeys.map(key => [key,novel[key]])),
           localChapters: chapters,
         });
+        rememberProjection(novelId,cutoff,Object.fromEntries(knowledgeKeys.map(key => [key,body[key] || served?.projection[key] || []])) as KnowledgeProjection);
         if (bookLocale(novelId) === 'en') {
           for (const chapter of db.novels[novelId].localChapters) chapter.wordCount = englishWordCount(chapter.content);
         }
@@ -984,7 +1027,11 @@ export function createDemoApi(
         }
         save();
       }
-      return json(knowledge(novelId));
+      const cutoff = cutoffFor(novelId,{...Object.fromEntries(url.searchParams),...body});
+      const result = knowledge(novelId,cutoff);
+      selectedCutoffs.set(novelId,cutoff);
+      if (url.searchParams.get("statusOnly") !== "1") rememberProjection(novelId,cutoff,result);
+      return json(result);
     }
     if (parts[1] === "story-timeline") {
       if (method === "DELETE") {
@@ -1029,21 +1076,56 @@ export function createDemoApi(
         preview(novelId, { ...Object.fromEntries(url.searchParams), ...body }),
       );
     if (parts[1] === "context-preview")
-      return success({ preview: preview(novelId, body) });
+      return success({ preview: preview(novelId, { ...Object.fromEntries(url.searchParams), ...body }) });
     if (parts[1] === "context" && parts[2] === "compress") {
       db.compressions[JSON.stringify(body.scope)] =
         method === "DELETE" ? 0 : body.count;
       return commit({ ok: true, compression: compression(body.scope) });
     }
     if (parts[1] === "graph") {
-      if (parts[2] === "subgraph") return success(db.graphs[novelId]);
-      const edge = db.graphs[novelId]?.edges.find((e) => e.id === parts[3]);
-      if (edge) {
-        Object.assign(edge, body, {
-          status: parts[4] === "reject" ? "rejected" : "user_confirmed",
-        });
-        return commit({ ok: true, edge });
+      const query = {...Object.fromEntries(url.searchParams),...body};
+      const cutoff = cutoffFor(novelId,query);
+      const graph = graphFor(novelId,cutoff);
+      if (parts[2] === "subgraph") {
+        graph.edges = graph.edges.filter(e => (query.includeLowConfidence !== "false" || e.confidence >= 0.7) && (query.confirmedOnly !== "true" || e.status === "user_confirmed"));
+        const ids = String(query.entityId || "").split(",").filter(Boolean);
+        if (ids.length) {
+          const included = new Set(ids.filter(key => graph.nodes.some(n => n.id === key)));
+          const hops = Number(query.hops) === 2 ? 2 : 1;
+          for (let i=0;i<hops;i++) {
+            const previous = new Set(included);
+            for (const edge of graph.edges) if (previous.has(edge.source) || previous.has(edge.target)) { included.add(edge.source); included.add(edge.target); }
+          }
+          graph.nodes = graph.nodes.filter(n => included.has(n.id));
+          graph.edges = graph.edges.filter(e => included.has(e.source) && included.has(e.target));
+          graph.seedEntities = graph.nodes.filter(n => ids.includes(n.id));
+        }
+        graph.contextText = [...graph.nodes.map(n => `${n.label}: ${n.description || ""}`),...graph.edges.filter(e => e.includeInPrompt).map(e => `${e.label}: ${e.description}`)].join("\n");
+        return success(graph);
       }
+      // The stage is part of the stable edge ID; reviewing an earlier relation
+      // cannot accidentally relabel the same pair after its next plot change.
+      const stage = Number(parts[3]?.split("-at-").at(-1));
+      const edgeCutoff = Number.isFinite(stage)?stage:cutoff;
+      const edge = projectGraph(novel,edgeCutoff,projectionFor(novelId,edgeCutoff)).edges.find(e => e.id === parts[3]);
+      if (edge) {
+        const patch = {
+          ...(typeof body.label === "string" ? {label:body.label} : {}),
+          ...(typeof body.description === "string" ? {description:body.description} : {}),
+          ...(typeof body.linkType === "string" ? {linkType:body.linkType} : {}),
+          ...(["positive","negative","neutral","mixed"].includes(body.polarity) ? {polarity:body.polarity as typeof edge.polarity} : {}),
+          ...(Number.isFinite(body.strength) ? {strength:Math.max(0,Math.min(1,body.strength))} : {}),
+          ...(Number.isFinite(body.validFromChapter) ? {validFromChapter:Math.max(edge.validFromChapter,body.validFromChapter)} : {}),
+          ...(Number.isFinite(body.validUntilChapter) ? {validUntilChapter:Math.min(edge.validUntilChapter,body.validUntilChapter)} : {}),
+          ...(typeof body.includeByDefault === "boolean" ? {includeInPrompt:body.includeByDefault} : {}),
+          status: (parts[4] === "reject" ? "rejected" : "user_confirmed") as typeof edge.status,
+        };
+        db.graphEdits ??= {};
+        db.graphEdits[novelId] ??= {};
+        db.graphEdits[novelId][edge.id] = {...db.graphEdits[novelId][edge.id],...patch};
+        return commit({ok:true,edge:{...edge,...patch}});
+      }
+      return json({ok:false,error:"Graph edge not found"},404);
     }
     if (parts[1] === "rewrite") {
       if (method === "GET")
@@ -1057,7 +1139,7 @@ export function createDemoApi(
       }
       const turn = body.roleplayTurn;
       const replyIndex = (body.roleplayMessages || []).filter((m: Row) => m.role === 'assistant').length;
-      const selectedCharacter = novel?.localCharacters.find(c => c.name === turn?.counterpartName);
+      const selectedCharacter = projectionFor(novelId,cutoffFor(novelId,body)).localCharacters.find(c => c.name === turn?.counterpartName);
       const defaultCharacter = novel?.localCharacters[1];
       const reply = selectedCharacter && selectedCharacter.name !== defaultCharacter?.name
         ? `${selectedCharacter.name}：${selectedCharacter.goal}。${selectedCharacter.note}`
@@ -1219,7 +1301,7 @@ export function createDemoApi(
           nodeType: node?.nodeType,
         });
       }
-      return json(detail);
+      return json({...detail,characterOptions:projectionFor(detail.novelId,detail.sourceChapterNo).localCharacters.map(c => ({name:c.name,protagonist:c.importanceTier === "protagonist"}))});
     }
     if (parts[1] === "writing-skill-sources")
       return success({

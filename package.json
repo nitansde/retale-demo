@@ -20,7 +20,9 @@
     "test:catalog": "node scripts/test-catalog.mjs",
     "test:collection-ui": "node scripts/test-collection-ui.mjs",
     "verify:upstream": "node scripts/verify-upstream.mjs",
-    "test:english-ui": "node scripts/test-english-ui.mjs"
+    "test:english-ui": "node scripts/test-english-ui.mjs",
+    "test:temporal": "node scripts/test-temporal-knowledge.mjs",
+    "test:temporal-ui": "node scripts/test-temporal-ui.mjs"
   },
   "dependencies": {
     "@lancedb/lancedb": "^0.27.2",
