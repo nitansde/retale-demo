@@ -15,6 +15,7 @@ export type DemoScenario = {
   alternative?: { title: string; instruction: string; text: string };
 };
 export type DemoBook = {
+  locale?: 'zh' | 'en';
   id: string;
   title: string;
   author: string;

@@ -67,3 +67,21 @@ https://zh.wikisource.org/w/index.php?oldid=2634386
 https://zh.wikisource.org/wiki/%E8%A5%BF%E9%81%8A%E8%A8%98/%E7%AC%AC007%E5%9B%9E
 https://zh.wikisource.org/w/index.php?oldid=2646669
 
+
+
+ENGLISH COLLECTION — retrieved 2026-09-29
+The Last Safe Room; A Bargain of Salt and Crows; A Familiar Kind of Murder; The Saint of Bellwether Hall: original English demo fiction written for ReTale. Not translations or excerpts from existing novels.
+
+English classics: public-domain original English texts, with complete chapter boundaries. Project Gutenberg headers, licence boilerplate and illustration captions omitted from the excerpts. Print-line wraps are reflowed; plain-text underscore italic markers are removed. Original spelling and historical wording retained. All summaries, character notes, outlines and demo branches are new editorial material. Branches are explicitly labelled “Demo branch — not the original text.”
+
+Pride and Prejudice — Jane Austen (1813), chapters I–VI
+https://www.gutenberg.org/ebooks/1342
+https://www.gutenberg.org/cache/epub/1342/pg1342.txt
+Download SHA-256: 3f6bb9d6f78e0293b56acd4714dd68cb7d6d1d293402031ce9d5a216bcaf9d75
+
+Dracula — Bram Stoker (1897), chapters I–IV
+https://www.gutenberg.org/ebooks/345
+https://www.gutenberg.org/cache/epub/345/pg345.txt
+Download SHA-256: 96cd16eacdbfebae8fdda5591f66e0cc8ee76be18e0cd1aca02bc00615782d28
+
+Snapshot: demo/catalog/english-public-domain.json. Import script: scripts/import-english-classics.py. Downloads are not needed to build or run the demo.

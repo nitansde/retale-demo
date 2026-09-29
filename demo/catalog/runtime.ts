@@ -1,18 +1,35 @@
 import { normalizeWorkspaceState } from '@/lib/workspace-state';
-import { plainTextToHtml, countChineseFriendlyWords, htmlToPlainText } from '@/lib/utils';
+import { plainTextToHtml, plainTextLinesToHtml, countChineseFriendlyWords, htmlToPlainText } from '@/lib/utils';
 import type { GraphAwareResult } from '@/lib/server/graph-types';
 import type { DemoBook } from './types';
+import { bookLocale } from './index';
 
 export function makeCatalogNovel(book: DemoBook) {
   const novelId = book.id;
+  const english = book.locale === 'en';
+  const toHtml = english ? plainTextLinesToHtml : plainTextToHtml;
   const chapters = book.chapters.map((chapter, i) => ({
     id: `${novelId}-ch-${i + 1}`, novelId,
-    title: book.source ? chapter.title : `第 ${i + 1} 章 ${chapter.title}`,
-    order: i + 1, content: plainTextToHtml(chapter.text), originalContent: plainTextToHtml(chapter.text),
-    wordCount: countChineseFriendlyWords(chapter.text), status: 'done' as const, updatedAt: '2026-09-29T08:00:00.000Z',
+    title: book.source ? chapter.title : english ? `Chapter ${i + 1} · ${chapter.title}` : `第 ${i + 1} 章 ${chapter.title}`,
+    order: i + 1, content: toHtml(chapter.text), originalContent: toHtml(chapter.text),
+    wordCount: english ? chapter.text.trim().split(/\s+/).length : countChineseFriendlyWords(chapter.text), status: 'done' as const, updatedAt: '2026-09-29T08:00:00.000Z',
   }));
   return normalizeWorkspaceState({
     currentNovelId: novelId, currentChapterId: chapters[0].id,
+    ...(english ? {
+      promptText: 'Preserve world rules and character relationships while sharpening atmosphere, pacing and tension.',
+      presets: [
+        {id:'preset-1',name:'Tension beneath the surface',mode:'heavy' as const,tone:'colder' as const,prompt:'Convey pressure through precise observations and withheld reactions.'},
+        {id:'preset-2',name:'Cinematic movement',mode:'perspective' as const,tone:'cinematic' as const,prompt:'Use physical action, spatial detail and clear changes of focus.'},
+        {id:'preset-3',name:'Dialogue with subtext',mode:'dialogue' as const,tone:'romantic' as const,prompt:'Let competing desires emerge through what each person chooses not to answer.'},
+      ],
+      constraints: [
+        {id:'cons-1',label:'Preserve world rules',enabled:true,strength:'strict' as const},
+        {id:'cons-2',label:'Keep established clues',enabled:true,strength:'soft' as const},
+        {id:'cons-3',label:'Respect the period and voice',enabled:true,strength:'soft' as const},
+        {id:'cons-4',label:'Vary paragraph length',enabled:true,strength:'soft' as const},
+      ],
+    } : {}),
     localNovels: [{ id: novelId, title: book.title, summary: book.summary, tags: book.tags }],
     localChapters: chapters,
     localCharacters: book.characters.map((character, i) => ({
@@ -34,7 +51,7 @@ export function makeCatalogNovel(book: DemoBook) {
     })),
     localTimelineEvents: book.chapters.map((chapter,i) => ({
       id:`${novelId}-event-${i}`,novelId,title:chapter.title,summary:chapter.summary,
-      order:i+1,phase:i===0?'开局':i===book.chapters.length-1?'收束':'推进',worldline:'主线',chapterIds:[chapters[i].id],
+      order:i+1,phase:english?(i===0?'Opening':i===book.chapters.length-1?'Resolution':'Development'):(i===0?'开局':i===book.chapters.length-1?'收束':'推进'),worldline:english?'Main story':'主线',chapterIds:[chapters[i].id],
     })),
   });
 }
@@ -67,7 +84,7 @@ export function makeCatalogGraph(novel: ReturnType<typeof normalizeWorkspaceStat
       const index=paragraphs.findIndex(p=>p.includes(entry.title));
       if(index<0) continue;
       edges.push({id:`${novel.currentNovelId}-world-edge-${edges.length}`,source:novel.localCharacters[0].id,target:entry.id,
-        linkType:'related',label:'故事线索',description:entry.content,strength:0.65,confidence:0.8,
+        linkType:'related',label:bookLocale(novel.currentNovelId)==='en'?'Story clue':'故事线索',description:entry.content,strength:0.65,confidence:0.8,
         validFromChapter:chapter.order,validUntilChapter:2147483647,status:'user_confirmed',hop:1,score:0.8,includeInPrompt:true,
         evidenceQuote:paragraphs[index],evidenceLocation:{chapterNo:chapter.order,lineStart:index+1,lineEnd:index+1}});
       break;

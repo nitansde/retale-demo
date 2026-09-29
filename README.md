@@ -1,6 +1,6 @@
 # ReTale · 戏说 Demo
 
-直接运行 ReTale 当前版本的书库、工作台、阅读/编辑器、图谱、改写/续写、What-if、未来跳跃、角色扮演、知识库、设置、预设兼容库、搜索与写作技巧页面。内置八本样书：四部新写的类型小说、两部公版名著选篇，以及原有的两本短篇演示。
+直接运行 ReTale 当前版本的书库、工作台、阅读/编辑器、图谱、改写/续写、What-if、未来跳跃、角色扮演、知识库、设置、预设兼容库、搜索与写作技巧页面。内置中英文两套独立书库：中文八本、英文六本。英文类型小说独立创作，不是中文故事的翻译。
 
 界面和状态管理来自 ReTale 提交 `444fe4c12b4876c29bb77a188e6afbd8a3b4e6f1`。`upstream-manifest.json` 记录原文件哈希；`npm run verify:upstream` 检查复制后的原版代码没有被改动。不是另写一套类似的 UX。
 
@@ -20,6 +20,23 @@
 名著正文保留繁体，不把演示改写冒充原文。来源与固定版本链接见 [sources.txt](public/sources.txt)。选篇在工作台内按 1…N 排序，章节标题保留原书回数。后续正文之外的模拟分支均明确标为“演示原创分支，非原著”。
 
 浏览器旧版数据自动补入新书，保留已有编辑、导入、设置和删除操作；刷新不会重复添加分支。首次升级后手动删除的新书也不会被自动恢复。“重置演示”会恢复完整书库。
+
+## English collection
+
+Use the existing **English** language switch in the library. Six independently authored or public-domain English books replace the Chinese collection in the library and writing-skill sources. Switching back restores the Chinese collection. Both collections stay in the same browser database; changing language never overwrites the book or draft currently open in the workspace. Visitor imports remain visible in either language.
+
+| Book | Genre and opening hook | Contents |
+| --- | --- | --- |
+| The Last Safe Room | LitRPG / progression fantasy. The tutorial kills its hero; a paramedic gets a class with zero damage and a safe room with one slot too few. | 6 original short chapters |
+| A Bargain of Salt and Crows | Romantasy. An assassin arrives at a fae prince’s wedding with a knife and a borrowed name; the crown is hungry for another bride. | 6 original short chapters |
+| A Familiar Kind of Murder | Cozy fantasy mystery. A tea-shop owner, a sarcastic raven and a murdered mayor’s ghost who remembers flavours instead of faces. | 6 original short chapters |
+| The Saint of Bellwether Hall | Dark academia. A scholarship includes caring for a “body” that wakes up—and wants its stolen brilliance back. | 6 original short chapters |
+| Pride and Prejudice | Jane Austen’s social comedy: money, dancing and a first impression that becomes a private grievance. | Complete chapters I–VI |
+| Dracula | Bram Stoker’s Gothic journal: a gracious host, no reflection and letters dated in the future. | Complete chapters I–IV |
+
+The four originals use distinct voices: first-person paramedic humour, wary romantic bargaining, a gently comic third-person mystery, and intimate academic horror. These are compact demo episodes, not full-length novels. Each English book has its own cast, relationships, lore, chapter events, graph evidence, writing technique and six seeded branches. English books also use English prompt presets, mock context and roleplay responses. The model remains simulated.
+
+Public-domain text provenance, download checksums and editorial processing are recorded in [sources.txt](public/sources.txt). Original excerpts stay intact; new counterfactual scenes are explicitly labelled. Edition 3 adds only the English books to an existing edition-2 database, preserving edits and intentionally deleted Chinese books. “Reset demo” restores both collections and retains the selected UI language.
 
 ## 运行
 
@@ -48,7 +65,11 @@ NEXT_PUBLIC_BASE_PATH=/retale-demo npm run build
 
 - `demo/catalog/webnovels.ts`、`lightnovels.ts`：原创正文、人物、关系、设定及分支。
 - `demo/catalog/classics.ts`：名著说明与演示分支；`public-domain.json`：公版原文快照。
+- `demo/catalog/english-serials.ts`、`english-mysteries.ts`：独立英文原创；`english-classics.ts`、`english-public-domain.json`：英文名著与演示分支。
+- `npm run test:english-ui`：英文六书、真实语言切换、编辑保留、技巧卡与移动端验证。
 - `npm run test:catalog`：内容引用、图谱证据、各书生成/跳跃、旧版数据迁移与存储容量。
 - `npm test`：原工作台交互回归；`npm run test:collection-ui`：新书入口、分支、角色对话与移动端。
 - `scripts/import-public-domain.py`：手动重新获取维基文库原文；网站构建与运行均不依赖该站在线。
 - `scripts/create-demo-covers.py`：通过已有封面字段生成 SVG 书封，不修改 ReTale UI。
+
+English source refresh: `python3 scripts/import-english-classics.py`. English SVG covers: `python3 scripts/create-english-covers.py`.

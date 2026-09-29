@@ -1,4 +1,5 @@
-import { demoBooks, demoBookById, catalogVersion } from "./catalog";
+import { demoBooks, demoBookById, catalogVersion, bookLocale, introducedVersion } from "./catalog";
+import { makeEnglishPresets } from "./english-presets";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Only the HTTP boundary is dynamic. Pages, stores, schemas and UI are upstream ReTale.
 import {
@@ -36,11 +37,13 @@ type Database = {
   compressions: Record<string, number>;
   settings: ReturnType<typeof makeSettings>;
   presets: ReturnType<typeof createDefaultPresetCompatLibrary>;
+  englishPresets?: ReturnType<typeof makeEnglishPresets>;
   skills: Record<string, ReturnType<typeof makeSkill>>;
   materials: Row[];
 };
 const id = (prefix: string) => `${prefix}-${crypto.randomUUID()}`;
 const now = () => new Date().toISOString();
+const englishWordCount = (html: string) => htmlToPlainText(html).match(/\S+/g)?.length || 0;
 const branchId = (novelId: string) => `${novelId}-main`;
 
 function emptyDatabase(): Database {
@@ -65,6 +68,7 @@ function emptyDatabase(): Database {
     compressions: {},
     settings: makeSettings(),
     presets: createDefaultPresetCompatLibrary(),
+    englishPresets: makeEnglishPresets(),
     skills: {
       ...Object.fromEntries(demoBooks.map(book => [`${book.id}-skill`, makeSkill(`${book.id}-skill`, book.skill.title, book.id)])),
       "demo-skill": makeSkill(),
@@ -77,6 +81,7 @@ function emptyDatabase(): Database {
 export function createDemoApi(
   saved: string | null = null,
   persist: (value: string) => void = () => {},
+  getLocale: () => "zh" | "en" = () => "zh",
 ) {
   let db = emptyDatabase();
   let restored = false;
@@ -98,7 +103,7 @@ export function createDemoApi(
   // Add the new collection once; retain edits, imports, preferences and intentional deletions.
   const seedIds = restored ? [] : Object.keys(db.novels);
   if (restored && (db.catalogVersion || 1) < catalogVersion) {
-    for (const book of demoBooks) {
+    for (const book of demoBooks.filter(book => introducedVersion(book.id) > (db.catalogVersion || 1))) {
       if (!db.novels[book.id]) {
         db.novels[book.id] = makeNovel(book.id, book.title);
         db.graphs[book.id] = makeGraph(db.novels[book.id]);
@@ -114,6 +119,10 @@ export function createDemoApi(
       .map(key => [key, db.novels[key]]));
   }
   db.catalogVersion = catalogVersion;
+  db.englishPresets ??= makeEnglishPresets();
+  const visible = (novelId: string) => !bookLocale(novelId) || bookLocale(novelId) === getLocale();
+  const copy = (zh: string, en: string, novelId?: string) =>
+    (novelId ? bookLocale(novelId) || getLocale() : getLocale()) === 'en' ? en : zh;
   const save = () => persist(JSON.stringify(db));
   const revisionHeaders = (novelId: string) => ({
     "X-Retale-Workspace-Revision": String(db.revisions[novelId] || 1),
@@ -222,6 +231,15 @@ export function createDemoApi(
     const chapter =
       db.novels[novelId]?.localChapters.find((c) => c.order === chapterNo) ||
       db.novels[novelId]?.localChapters[0];
+    // Store the selected passage with nearby context, not six duplicate copies of a full classic chapter.
+    // Complete original chapters remain available through the workspace API.
+    const fullSource = chapter ? htmlToPlainText(chapter.content) : selected;
+    const selectionStart = fullSource.indexOf(selected);
+    const precedingBreak = fullSource.lastIndexOf('\n\n', Math.max(0, selectionStart - 900));
+    const sourceStart = selectionStart < 0 || precedingBreak < 0 ? 0 : precedingBreak + 2;
+    const nextParagraph = fullSource.indexOf('\n\n', Math.max(0, selectionStart) + selected.length + 900);
+    const sourceEnd = nextParagraph < 0 ? fullSource.length : nextParagraph;
+    const sourcePassage = fullSource.length > 4000 ? fullSource.slice(sourceStart, sourceEnd) : fullSource;
     const detail: Row = {
       id: detailId,
       novelId,
@@ -254,8 +272,8 @@ export function createDemoApi(
           id: `${detailId}-delta`,
           sessionId: detailId,
           deltaType: "relationship",
-          subjectName: db.novels[novelId]?.localCharacters[0]?.name || "主角",
-          targetName: db.novels[novelId]?.localCharacters[1]?.name || "对手",
+          subjectName: db.novels[novelId]?.localCharacters[0]?.name || copy("主角", "Protagonist", novelId),
+          targetName: db.novels[novelId]?.localCharacters[1]?.name || copy("对手", "Counterpart", novelId),
           subjectEntityId: null,
           targetEntityId: null,
           key: "trust",
@@ -274,7 +292,7 @@ export function createDemoApi(
         chapterNo,
         whatIfSessionId: null,
       },
-      sourceTextSnapshot: chapter ? htmlToPlainText(chapter.content) : selected,
+      sourceTextSnapshot: sourcePassage,
       targetOutlineNodeId: body.targetOutlineNodeId || `${novelId}-future-${targetNo}`,
       targetOutlineChapterId:
         body.targetOutlineChapterId || `${novelId}-link-${targetNo}`,
@@ -415,7 +433,7 @@ export function createDemoApi(
       totalChapters: count,
       compressedChapters: compressed,
       chapters: Array.from({ length: count }, (_, i) => ({
-        label: `生成历史 ${i + 1}`,
+        label: `${copy("生成历史", "Generation history", scope.novelId)} ${i + 1}`,
         tokenEstimate: 1500,
       })),
       summary: compressed
@@ -449,7 +467,7 @@ export function createDemoApi(
     const blocks = [
       {
         id: "source-text",
-        label: "原文片段",
+        label: copy("原文片段", "Source passage", novelId),
         enabled: true,
         required: true,
         priority: "highest",
@@ -460,7 +478,7 @@ export function createDemoApi(
       },
       {
         id: "characters",
-        label: "人物与关系",
+        label: copy("人物与关系", "Characters and relationships", novelId),
         enabled: !disabled.includes("characters"),
         required: false,
         priority: "high",
@@ -471,7 +489,7 @@ export function createDemoApi(
       },
       {
         id: "history",
-        label: "生成历史",
+        label: copy("生成历史", "Generation history", novelId),
         enabled: !disabled.includes("history"),
         required: false,
         priority: "medium",
@@ -480,7 +498,7 @@ export function createDemoApi(
     ];
     const promptBlocks = blocks.map((b) => ({ ...b, trimmed: false }));
     const systemPrompt =
-      "这是 ReTale 静态演示中的模拟上下文；保持人物关系、伏笔和叙事风格。";
+      copy("这是 ReTale 静态演示中的模拟上下文；保持人物关系、伏笔和叙事风格。", "Simulated context for the ReTale demo. Preserve character relationships, established clues and narrative voice.", novelId);
     const userPrompt =
       promptBlocks
         .filter((b) => b.enabled)
@@ -516,7 +534,7 @@ export function createDemoApi(
               lineStart: 1,
               lineEnd: 3,
               title: chapter.title,
-              sourceLabel: "原文",
+              sourceLabel: copy("原文", "Original text", novelId),
               text: htmlToPlainText(chapter.content),
               score: 0.94,
             },
@@ -584,9 +602,9 @@ export function createDemoApi(
       chapterNo: c.order,
       title: c.title,
       summary: demoBookById[novelId]?.chapters[c.order-1]?.summary || htmlToPlainText(c.content).slice(0, 100),
-      originalOutcome: demoBookById[novelId]?.chapters[c.order-1]?.summary || "沿着线索抵达下一站。",
+      originalOutcome: demoBookById[novelId]?.chapters[c.order-1]?.summary || copy("沿着线索抵达下一站。", "Follow the clues to the next scene.", novelId),
       trackKey: "main",
-      phaseLabel: "主线",
+      phaseLabel: copy("主线", "Main story", novelId),
       sourceType: "chapter_summary",
       confidence: 0.98,
       sortOrder: c.order,
@@ -597,7 +615,7 @@ export function createDemoApi(
       tracks: [
         {
           trackKey: "main",
-          phaseLabel: "主线",
+          phaseLabel: copy("主线", "Main story", novelId),
           eventCount: events.length,
           sourceTypes: ["chapter_summary"],
         },
@@ -653,7 +671,7 @@ export function createDemoApi(
         url.searchParams.get("novelId") ||
         (parts[1] === "novels" ? parts[2] : "") ||
         db.details[parts[3] || parts[2]]?.novelId ||
-        "demo-mist",
+        (getLocale() === "en" ? "demo-safe-room" : "demo-mist"),
     );
     const novel = db.novels[novelId];
     const scene = scenarioFor(novelId);
@@ -663,7 +681,7 @@ export function createDemoApi(
     };
     if (parts[1] === "novels" && !parts[2])
       return success({
-        novels: Object.entries(db.novels).map(([key, value]) => ({
+        novels: Object.entries(db.novels).filter(([key]) => visible(key)).map(([key, value]) => ({
           ...value.localNovels[0],
           author: demoBookById[key]?.author || "ReTale Demo",
           coverImage: demoBookById[key] ? `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/covers/${key}.svg` : "",
@@ -728,7 +746,7 @@ export function createDemoApi(
         return commit({
           ok: true,
           deletedNovelId: novelId,
-          nextNovelId: Object.keys(db.novels)[0] || null,
+          nextNovelId: Object.keys(db.novels).find(visible) || null,
           deletionState: "deleted",
           cleanupPending: false,
         });
@@ -771,6 +789,9 @@ export function createDemoApi(
           ...body,
           localChapters: chapters,
         });
+        if (bookLocale(novelId) === 'en') {
+          for (const chapter of db.novels[novelId].localChapters) chapter.wordCount = englishWordCount(chapter.content);
+        }
         db.revisions[novelId] = (db.revisions[novelId] || 1) + 1;
         return commit(
           { ok: true, revision: db.revisions[novelId], novelId },
@@ -787,7 +808,7 @@ export function createDemoApi(
         return json({ ok: false, error: "Chapter not found" }, 404);
       Object.assign(chapter, {
         content: body.content,
-        wordCount: body.wordCount,
+        wordCount: bookLocale(owner.currentNovelId) === 'en' ? englishWordCount(body.content) : body.wordCount,
         updatedAt: body.updatedAtLabel || now(),
       });
       const key = owner.currentNovelId;
@@ -800,9 +821,9 @@ export function createDemoApi(
     if (parts[1] === "import-txt" && form) {
       const file = form.get("file");
       if (!(file instanceof File) || file.size > 10 * 1024 * 1024)
-        return json({ ok: false, error: "请选择 10 MiB 以内的 TXT 文件" }, 400);
+        return json({ ok: false, error: copy("请选择 10 MiB 以内的 TXT 文件", "Choose a TXT file smaller than 10 MiB") }, 400);
       const text = await file.text();
-      if (!text.trim()) return json({ ok: false, error: "文件为空" }, 400);
+      if (!text.trim()) return json({ ok: false, error: copy("文件为空", "The file is empty") }, 400);
       const state = normalizeWorkspaceState(
         importNovelIntoWorkspace(createEmptyWorkspaceState(), {
           title: file.name.replace(/\.txt$/i, ""),
@@ -837,7 +858,7 @@ export function createDemoApi(
           running: false,
           status: "demo",
           models: [],
-          message: "静态演示使用内置检索结果。",
+          message: copy("静态演示使用内置检索结果。", "This static demo uses prewritten retrieval results."),
         });
       if (method === "POST") {
         db.settings = body as Database["settings"];
@@ -846,12 +867,14 @@ export function createDemoApi(
       return json(db.settings);
     }
     if (parts[1] === "settings" && parts[2] === "preset-compat") {
+      const presetKey = getLocale() === "en" ? "englishPresets" : "presets";
+      db[presetKey] ??= makeEnglishPresets();
       if (parts[3] === "import") {
         let payload;
         try {
           payload = JSON.parse(body.jsonText);
         } catch {
-          return json({ ok: false, error: "JSON 格式无效" }, 400);
+          return json({ ok: false, error: copy("JSON 格式无效", "Invalid JSON") }, 400);
         }
         const importedIds: string[] = [];
         let warnings: string[] = [];
@@ -859,24 +882,24 @@ export function createDemoApi(
           const value = normalizePresetCompatStandaloneRegexImport(payload);
           warnings = value.warnings;
           for (const regex of value.regexes) {
-            db.presets.standaloneRegexes[regex.id] = regex;
+            db[presetKey]!.standaloneRegexes[regex.id] = regex;
             importedIds.push(regex.id);
           }
         } else {
           const value = normalizePresetCompatPresetImport(payload);
           warnings = value.warnings;
-          db.presets.presets[value.preset.id] = value.preset;
+          db[presetKey]!.presets[value.preset.id] = value.preset;
           importedIds.push(value.preset.id);
         }
-        db.presets.revision++;
-        return commit({ ok: true, library: db.presets, importedIds, warnings });
+        db[presetKey]!.revision++;
+        return commit({ ok: true, library: db[presetKey], importedIds, warnings });
       }
       if (method === "POST") {
-        db.presets = body.library;
-        db.presets.revision++;
-        return commit({ ok: true, library: db.presets });
+        db[presetKey] = body.library;
+        db[presetKey]!.revision++;
+        return commit({ ok: true, library: db[presetKey] });
       }
-      return json(db.presets);
+      return json(db[presetKey]);
     }
     if (parts[1] === "knowledge-view") {
       if (method === "POST") {
@@ -909,7 +932,7 @@ export function createDemoApi(
                     ? "aborted"
                     : "completed",
               progress: 1,
-              currentStep: "演示知识处理完成",
+              currentStep: copy("演示知识处理完成", "Demo knowledge processing complete", novelId),
               createdAt: now(),
               updatedAt: now(),
               etaMinutes: null,
@@ -920,7 +943,7 @@ export function createDemoApi(
                   status: "completed",
                   progress: 1,
                   etaMinutes: null,
-                  detail: "内置 dummy 结果",
+                  detail: copy("内置 dummy 结果", "Prewritten demo results", novelId),
                 }),
               ),
             },
@@ -1041,7 +1064,7 @@ export function createDemoApi(
           jobId: id("rewrite-job"),
           status: "completed",
           progress: 1,
-          currentStep: "演示版本已生成",
+          currentStep: copy("演示版本已生成", "Demo version generated", novelId),
           errorMessage: null,
           createdAt: now(),
           updatedAt: now(),
@@ -1167,7 +1190,7 @@ export function createDemoApi(
     }
     if (parts[1] === "writing-skill-sources")
       return success({
-        librarySources: Object.entries(db.novels).map(([key, n]) => ({
+        librarySources: Object.entries(db.novels).filter(([key]) => visible(key)).map(([key, n]) => ({
           sourceType: "LIBRARY",
           sourceId: key,
           title: n.localNovels[0].title,
@@ -1220,12 +1243,12 @@ export function createDemoApi(
       }
       if (method === "POST") {
         const sourceNovelId = body.sourceRefs?.find((source: Row) => source.sourceType === 'LIBRARY')?.sourceId
-          || (parts[1] === 'material-libraries' ? parts[2] : 'demo-mist');
+          || (parts[1] === 'material-libraries' ? parts[2] : getLocale() === 'en' ? 'demo-safe-room' : 'demo-mist');
         const card = cardId
           ? db.skills[cardId]
           : makeSkill(
               id("skill"),
-              body.instruction?.slice(0, 24) || "新的写作技巧",
+              body.instruction?.slice(0, 24) || copy("新的写作技巧", "New writing technique"),
               sourceNovelId,
             );
         card.userInstruction =
@@ -1238,7 +1261,7 @@ export function createDemoApi(
           userInstruction: card.userInstruction,
           modelConfigId: "demo",
           status: "COMPLETED",
-          message: "模拟提炼完成",
+          message: copy("模拟提炼完成", "Simulated extraction complete"),
           randomSeed: 1,
           roundCount: 1,
           sampledRanges: [],
@@ -1260,9 +1283,8 @@ export function createDemoApi(
           ? { card: db.skills[cardId] }
           : {
               cards: Object.values(db.skills).filter(
-                (c) =>
-                  !url.searchParams.has("status") ||
-                  c.status === url.searchParams.get("status"),
+                (c) => visible(c.libraryId) && (!url.searchParams.has("status") ||
+                  c.status === url.searchParams.get("status")),
               ),
             },
       );
@@ -1283,7 +1305,7 @@ export function createDemoApi(
         ),
       });
     return json(
-      { ok: false, error: `此演示接口尚未实现：${method} ${url.pathname}` },
+      { ok: false, error: `${copy("此演示接口尚未实现", "Demo endpoint unavailable")}: ${method} ${url.pathname}` },
       501,
     );
   }

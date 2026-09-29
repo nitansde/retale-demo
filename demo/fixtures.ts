@@ -315,11 +315,11 @@ export function makeSkill(
   if (book) {
     const chapter = book.scenario.chapter;
     Object.assign(card, { libraryId: novelId, libraryName: book.title, title: book.skill.title,
-      userInstruction: book.skill.rule, summary: book.skill.rule, applicationScope: book.tags.join('、'),
+      userInstruction: book.skill.rule, summary: book.skill.rule, applicationScope: book.tags.join(book.locale === 'en' ? ', ' : '、'),
       rules: [{text:book.skill.rule,evidenceRefs:[book.chapters[chapter-1].title]}],avoid:[book.skill.avoid],
       sources:[{sourceType:'LIBRARY',sourceId:novelId,sourceName:book.title,sourceVersion:'1',sourceOrder:0}] });
     card.examples[0].rangeRef = {libraryId:novelId,libraryVersion:'1',workId:novelId,chapterId:`${novelId}-ch-${chapter}`,startParagraphId:'p1',endParagraphId:'p3'};
-    card.examples[0].displayRef = `${book.chapters[chapter-1].title} / 1–3 段`;
+    card.examples[0].displayRef = `${book.chapters[chapter-1].title} / ${book.locale === 'en' ? 'paragraphs 1–3' : '1–3 段'}`;
     card.examples[0].anonymizedText = book.chapters[chapter-1].text.split('\n\n').slice(0,3).join('\n\n');
   }
   return card;

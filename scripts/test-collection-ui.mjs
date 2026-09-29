@@ -7,7 +7,7 @@ import { resolve } from 'node:path'
 const url=(process.env.DEMO_TEST_URL || 'http://localhost:3000/retale-demo').replace(/\/$/,'')
 await mkdir('test-results',{recursive:true})
 const outfile=resolve('test-results/catalog-ui.cjs')
-await build({stdin:{contents:'export {demoBooks} from "./demo/catalog";',resolveDir:process.cwd()},outfile,bundle:true,platform:'node',format:'cjs',packages:'external',logLevel:'silent'})
+await build({stdin:{contents:'export {chineseBooks as demoBooks} from "./demo/catalog";',resolveDir:process.cwd()},outfile,bundle:true,platform:'node',format:'cjs',packages:'external',logLevel:'silent'})
 const {demoBooks}=createRequire(import.meta.url)(outfile)
 const browser=await chromium.launch()
 const page=await browser.newPage({viewport:{width:1440,height:1050}})

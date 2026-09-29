@@ -19,7 +19,8 @@
     "test": "node --experimental-strip-types scripts/test-demo.mjs",
     "test:catalog": "node scripts/test-catalog.mjs",
     "test:collection-ui": "node scripts/test-collection-ui.mjs",
-    "verify:upstream": "node scripts/verify-upstream.mjs"
+    "verify:upstream": "node scripts/verify-upstream.mjs",
+    "test:english-ui": "node scripts/test-english-ui.mjs"
   },
   "dependencies": {
     "@lancedb/lancedb": "^0.27.2",

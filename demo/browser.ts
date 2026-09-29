@@ -1,6 +1,7 @@
 import { http, passthrough } from "msw";
 import { setupWorker } from "msw/browser";
 import { createDemoApi } from "./api";
+import { getDemoLocale } from "./locale";
 import { removeBrowserWorkspaceNovelSession } from "@/lib/browser-preferences";
 import { CHAPTER_DRAFT_CACHE_STORAGE_KEY } from "@/lib/chapter-draft-cache";
 
@@ -20,7 +21,7 @@ export async function startDemo() {
     } catch {
       /* In-memory demo remains usable. */
     }
-  });
+  }, getDemoLocale);
   if (!fetchPatched && basePath) {
     const nativeFetch = window.fetch.bind(window);
     window.fetch = (input, init) => {
