@@ -1,3 +1,6 @@
+import { demoBookById } from "./catalog";
+import { makeCatalogNovel, makeCatalogGraph } from "./catalog/runtime";
+import type { DemoScenario } from "./catalog/types";
 import { normalizeWorkspaceState } from "@/lib/workspace-state";
 import { createDefaultAISettings } from "@/lib/ai-settings";
 import { createDefaultPresetCompatLibrary } from "@/lib/preset-compat/surface-contract";
@@ -36,6 +39,7 @@ const titles = [
 ];
 
 export function makeNovel(id: string, title: string) {
+  if (demoBookById[id]) return makeCatalogNovel(demoBookById[id]);
   const isSpace = id === "demo-star";
   const chapters: Chapter[] = texts.map((text, i) => {
     const prose = isSpace
@@ -183,6 +187,7 @@ export function makeSettings() {
 export function makeGraph(
   novel: ReturnType<typeof makeNovel>,
 ): GraphAwareResult {
+  if (demoBookById[novel.currentNovelId]) return makeCatalogGraph(novel);
   const nodes = [
     ...novel.localCharacters.map((c, i) => ({
       id: c.id,
@@ -248,8 +253,9 @@ export function makeGraph(
 export function makeSkill(
   id = "demo-skill",
   title = "有潜台词的对话",
+  novelId = "demo-mist",
 ): WritingSkillCardDetail {
-  return {
+  const card: WritingSkillCardDetail = {
     id,
     libraryId: "demo-mist",
     libraryVersion: "1",
@@ -305,6 +311,37 @@ export function makeSkill(
       },
     ],
   };
+  const book = demoBookById[novelId];
+  if (book) {
+    const chapter = book.scenario.chapter;
+    Object.assign(card, { libraryId: novelId, libraryName: book.title, title: book.skill.title,
+      userInstruction: book.skill.rule, summary: book.skill.rule, applicationScope: book.tags.join('、'),
+      rules: [{text:book.skill.rule,evidenceRefs:[book.chapters[chapter-1].title]}],avoid:[book.skill.avoid],
+      sources:[{sourceType:'LIBRARY',sourceId:novelId,sourceName:book.title,sourceVersion:'1',sourceOrder:0}] });
+    card.examples[0].rangeRef = {libraryId:novelId,libraryVersion:'1',workId:novelId,chapterId:`${novelId}-ch-${chapter}`,startParagraphId:'p1',endParagraphId:'p3'};
+    card.examples[0].displayRef = `${book.chapters[chapter-1].title} / 1–3 段`;
+    card.examples[0].anonymizedText = book.chapters[chapter-1].text.split('\n\n').slice(0,3).join('\n\n');
+  }
+  return card;
 }
 
 export { createDefaultPresetCompatLibrary };
+
+
+export function scenarioFor(novelId: string): DemoScenario {
+  const book = demoBookById[novelId];
+  if (book) return book.scenario;
+  const scenario: DemoScenario = {
+    chapter:3, sourceText, instruction:'让主角决定和信使一起赴约，保留钥匙的伏笔。',
+    rewriteText:generatedText,continueText:generatedText,whatIfText:generatedText,futureText,
+    bridge:'两人从剧院找到旧航海图，一起穿过北岸迷雾，在退潮后抵达灯塔。',
+    titles:{rewrite:'一起赴约',continue_block:'走入剧院',what_if:'如果选择留下',future_jump:'灯塔重逢',roleplay_session:'雨夜的对话'},
+    delta:{before:'试探',after:'同盟',description:'主角选择留下，两人的关系由试探转向合作。'},
+    roleplay:{opening:'你一直在等我吗？',reply:'我答应过一个人，要把钥匙交给你。',narration:'雨水顺着伞沿落下。她握紧另一把钥匙。',
+      responses:['好。这一次，我会把知道的都告诉你。']},
+  };
+  if (novelId === 'demo-star') {
+    return JSON.parse(JSON.stringify(scenario).replaceAll('林舟','许澄').replaceAll('沈遥','叶星').replaceAll('灯塔','信标站').replaceAll('渡口','空间港').replaceAll('铜钥匙','航行密钥').replaceAll('剧院','观测站').replaceAll('何叔','老船长'));
+  }
+  return scenario;
+}

@@ -32,6 +32,8 @@ jobs:
         run: npm ci
       - name: Verify original ReTale files
         run: npm run verify:upstream
+      - name: Validate collection and saved-data migration
+        run: npm run test:catalog
       - name: Build static app
         env:
           NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}

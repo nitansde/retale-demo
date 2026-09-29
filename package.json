@@ -17,6 +17,8 @@
     "typecheck": "tsc --noEmit",
     "lint:demo": "eslint demo app/layout.tsx app/page.tsx scripts/*.mjs",
     "test": "node --experimental-strip-types scripts/test-demo.mjs",
+    "test:catalog": "node scripts/test-catalog.mjs",
+    "test:collection-ui": "node scripts/test-collection-ui.mjs",
     "verify:upstream": "node scripts/verify-upstream.mjs"
   },
   "dependencies": {

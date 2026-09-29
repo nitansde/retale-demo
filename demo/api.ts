@@ -1,3 +1,4 @@
+import { demoBooks, demoBookById, catalogVersion } from "./catalog";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Only the HTTP boundary is dynamic. Pages, stores, schemas and UI are upstream ReTale.
 import {
@@ -7,9 +8,7 @@ import {
   makeSkill,
   createDefaultPresetCompatLibrary,
   seedDate,
-  sourceText,
-  generatedText,
-  futureText,
+  scenarioFor,
 } from "./fixtures";
 import {
   normalizeWorkspaceState,
@@ -25,6 +24,7 @@ import {
 type Row = Record<string, any>;
 type Database = {
   version: number;
+  catalogVersion?: number;
   novels: Record<string, ReturnType<typeof makeNovel>>;
   metadata: Record<string, Row>;
   revisions: Record<string, number>;
@@ -45,14 +45,16 @@ const branchId = (novelId: string) => `${novelId}-main`;
 
 function emptyDatabase(): Database {
   const novels = {
+    ...Object.fromEntries(demoBooks.map(book => [book.id, makeNovel(book.id, book.title)])),
     "demo-mist": makeNovel("demo-mist", "雾城来信"),
     "demo-star": makeNovel("demo-star", "星海回声"),
   };
   return {
     version: 1,
+    catalogVersion,
     novels,
     metadata: {},
-    revisions: { "demo-mist": 1, "demo-star": 1 },
+    revisions: Object.fromEntries(Object.keys(novels).map(key => [key, 1])),
     nodes: [],
     details: {},
     jobs: {},
@@ -64,6 +66,7 @@ function emptyDatabase(): Database {
     settings: makeSettings(),
     presets: createDefaultPresetCompatLibrary(),
     skills: {
+      ...Object.fromEntries(demoBooks.map(book => [`${book.id}-skill`, makeSkill(`${book.id}-skill`, book.skill.title, book.id)])),
       "demo-skill": makeSkill(),
       "demo-skill-2": makeSkill("demo-skill-2", "用环境推进悬念"),
     },
@@ -92,6 +95,25 @@ export function createDemoApi(
   } catch {
     /* An invalid browser snapshot is replaced with the fictional seed. */
   }
+  // Add the new collection once; retain edits, imports, preferences and intentional deletions.
+  const seedIds = restored ? [] : Object.keys(db.novels);
+  if (restored && (db.catalogVersion || 1) < catalogVersion) {
+    for (const book of demoBooks) {
+      if (!db.novels[book.id]) {
+        db.novels[book.id] = makeNovel(book.id, book.title);
+        db.graphs[book.id] = makeGraph(db.novels[book.id]);
+        db.revisions[book.id] = 1;
+        seedIds.push(book.id);
+      }
+      db.skills[`${book.id}-skill`] ??= makeSkill(`${book.id}-skill`, book.skill.title, book.id);
+    }
+  }
+  if (restored && seedIds.length) {
+    db.novels = Object.fromEntries([...demoBooks.map(b => b.id), ...Object.keys(db.novels)]
+      .filter((key, index, all) => all.indexOf(key) === index && db.novels[key])
+      .map(key => [key, db.novels[key]]));
+  }
+  db.catalogVersion = catalogVersion;
   const save = () => persist(JSON.stringify(db));
   const revisionHeaders = (novelId: string) => ({
     "X-Retale-Workspace-Revision": String(db.revisions[novelId] || 1),
@@ -114,15 +136,17 @@ export function createDemoApi(
     body: Row,
     seededId?: string,
   ) {
+    const scene = scenarioFor(novelId);
+    const delta = body.delta || scene.delta;
+    const targetNo = db.novels[novelId]?.localChapters.length || 8;
     const detailId = seededId || id(type);
     const nodeId = `${detailId}-node`;
     const chapterNo = Number(
-      body.sourceChapterNo || body.sourceContext?.chapterNo || 3,
+      body.sourceChapterNo || body.sourceContext?.chapterNo || scene.chapter,
     );
-    const selected = body.selectedText || sourceText;
-    const text = body.generatedText || generatedText;
-    const instruction =
-      body.userInstruction || "让主角决定和信使一起赴约，保留钥匙的伏笔。";
+    const selected = body.selectedText || scene.sourceText;
+    const text = body.generatedText || (type === 'continue_block' ? scene.continueText : type === 'what_if' ? scene.whatIfText : type === 'future_jump' ? scene.futureText : scene.rewriteText);
+    const instruction = body.userInstruction || scene.instruction;
     const label =
       (
         {
@@ -138,17 +162,7 @@ export function createDemoApi(
         db.nodes.filter((n) => n.novelId === novelId && n.nodeType === type)
           .length + 1,
       ).padStart(2, "0");
-    const title =
-      body.titleHint ||
-      (
-        {
-          rewrite: "一起赴约",
-          continue_block: "走入剧院",
-          what_if: "如果选择留下",
-          future_jump: "灯塔重逢",
-          roleplay_session: "雨夜的对话",
-        } as Row
-      )[type];
+    const title = body.titleHint || scene.titles[type];
     const node: Row = {
       type: "branch_node",
       id: nodeId,
@@ -165,7 +179,7 @@ export function createDemoApi(
       colorToken: "violet",
       sourceChapterNo: chapterNo,
       targetChapterNo:
-        type === "future_jump" ? Number(body.targetChapterNo || 8) : null,
+        type === "future_jump" ? Number(body.targetChapterNo || targetNo) : null,
       continueBlockId: ["rewrite", "continue_block"].includes(type)
         ? detailId
         : null,
@@ -197,9 +211,8 @@ export function createDemoApi(
       selectedText: selected,
       originalText: body.originalText || selected,
       generatedText: text,
-      generatedTargetText: futureText,
-      bridgeSummary:
-        "两人从剧院找到旧航海图，一起穿过北岸迷雾，在退潮后抵达灯塔。",
+      generatedTargetText: scene.futureText,
+      bridgeSummary: scene.bridge,
       title,
       subtitle: instruction,
       inputTokens: 640,
@@ -241,15 +254,15 @@ export function createDemoApi(
           id: `${detailId}-delta`,
           sessionId: detailId,
           deltaType: "relationship",
-          subjectName: "林舟",
-          targetName: "沈遥",
+          subjectName: db.novels[novelId]?.localCharacters[0]?.name || "主角",
+          targetName: db.novels[novelId]?.localCharacters[1]?.name || "对手",
           subjectEntityId: null,
           targetEntityId: null,
           key: "trust",
-          oldValue: "试探",
-          newValue: "同盟",
+          oldValue: delta.before,
+          newValue: delta.after,
           validFromChapter: chapterNo,
-          description: "主角选择留下，两人的关系由试探转向合作。",
+          description: delta.description,
           confidence: 0.95,
           createdAt: seedDate,
         },
@@ -262,13 +275,13 @@ export function createDemoApi(
         whatIfSessionId: null,
       },
       sourceTextSnapshot: chapter ? htmlToPlainText(chapter.content) : selected,
-      targetOutlineNodeId: body.targetOutlineNodeId || `${novelId}-future-8`,
+      targetOutlineNodeId: body.targetOutlineNodeId || `${novelId}-future-${targetNo}`,
       targetOutlineChapterId:
-        body.targetOutlineChapterId || `${novelId}-link-8`,
+        body.targetOutlineChapterId || `${novelId}-link-${targetNo}`,
       targetChapterNo: node.targetChapterNo,
-      userDirection: body.userDirection || "两人一起抵达灯塔。",
+      userDirection: body.userDirection || scene.bridge,
       bridgeSummary: revision.bridgeSummary,
-      generatedTargetText: futureText,
+      generatedTargetText: scene.futureText,
       errorMessage: null,
       sourceChapterId: chapter?.id,
       sourceChapterTitle: chapter?.title,
@@ -336,8 +349,9 @@ export function createDemoApi(
     return message;
   }
 
-  if (!restored) {
-    for (const novelId of Object.keys(db.novels)) {
+  if (seedIds.length) {
+    for (const novelId of seedIds) {
+      const scene = scenarioFor(novelId);
       const rewrite = addNode(novelId, "rewrite", {}, `${novelId}-rewrite`);
       addNode(
         novelId,
@@ -361,30 +375,35 @@ export function createDemoApi(
       const [player, counterpart] = db.novels[novelId].localCharacters;
       const user = appendMessage(detail, {
         role: "user",
-        content: "你一直在等我吗？",
+        content: scene.roleplay.opening,
         turn: {
           playerName: player.name,
           counterpartName: counterpart.name,
-          storyGuidance: "在雨夜的剧院门口相遇。",
-          dialogue: "你一直在等我吗？",
+          storyGuidance: scene.instruction,
+          dialogue: scene.roleplay.opening,
           maxCharacters: 600,
         },
       });
       appendMessage(detail, {
         role: "assistant",
-        content: "雨水顺着伞沿落下。\n“我答应过一个人，要把钥匙交给你。”",
+        content: `${scene.roleplay.narration}\n${scene.roleplay.reply}`,
         parentMessageId: user.id,
         script: {
           playerName: player.name,
           counterpartName: counterpart.name,
           blocks: [
-            { type: "narration", text: "雨水顺着伞沿落下。她握紧另一把钥匙。" },
-            { type: "counterpart", text: "“我答应过一个人，要把钥匙交给你。”" },
+            { type: "narration", text: scene.roleplay.narration },
+            { type: "counterpart", text: scene.roleplay.reply },
           ],
         },
       });
+      if (scene.alternative) {
+        addNode(novelId, 'what_if', { titleHint:scene.alternative.title, userInstruction:scene.alternative.instruction,
+          generatedText:scene.alternative.text, delta:{before:scene.delta.before,after:scene.alternative.title,description:scene.alternative.instruction} }, `${novelId}-alternative`);
+      }
     }
   }
+  save();
 
   function compression(scope: Row) {
     const key = JSON.stringify(scope);
@@ -400,13 +419,14 @@ export function createDemoApi(
         tokenEstimate: 1500,
       })),
       summary: compressed
-        ? "主角与信使选择合作，在旧剧院找到航海图，准备前往灯塔。"
+        ? scenarioFor(scope.novelId).bridge
         : null,
       tokenEstimate: count * 1500,
     };
   }
 
   function preview(novelId: string, body: Row) {
+    const scene = scenarioFor(novelId);
     const novel = db.novels[novelId] || Object.values(db.novels)[0];
     const chapter =
       novel?.localChapters.find((c) => c.id === body.chapterId) ||
@@ -436,7 +456,7 @@ export function createDemoApi(
         content:
           body.selectedText ||
           (chapter && htmlToPlainText(chapter.content)) ||
-          sourceText,
+          scene.sourceText,
       },
       {
         id: "characters",
@@ -455,7 +475,7 @@ export function createDemoApi(
         enabled: !disabled.includes("history"),
         required: false,
         priority: "medium",
-        content: generatedText,
+        content: scene.rewriteText,
       },
     ];
     const promptBlocks = blocks.map((b) => ({ ...b, trimmed: false }));
@@ -563,8 +583,8 @@ export function createDemoApi(
       id: `${novelId}-future-${c.order}`,
       chapterNo: c.order,
       title: c.title,
-      summary: htmlToPlainText(c.content).slice(0, 100),
-      originalOutcome: "沿着线索抵达下一站。",
+      summary: demoBookById[novelId]?.chapters[c.order-1]?.summary || htmlToPlainText(c.content).slice(0, 100),
+      originalOutcome: demoBookById[novelId]?.chapters[c.order-1]?.summary || "沿着线索抵达下一站。",
       trackKey: "main",
       phaseLabel: "主线",
       sourceType: "chapter_summary",
@@ -632,9 +652,11 @@ export function createDemoApi(
       body.novelId ||
         url.searchParams.get("novelId") ||
         (parts[1] === "novels" ? parts[2] : "") ||
+        db.details[parts[3] || parts[2]]?.novelId ||
         "demo-mist",
     );
     const novel = db.novels[novelId];
+    const scene = scenarioFor(novelId);
     const commit = (value: any, headers: Record<string, string> = {}) => {
       save();
       return json(value, 200, headers);
@@ -643,8 +665,8 @@ export function createDemoApi(
       return success({
         novels: Object.entries(db.novels).map(([key, value]) => ({
           ...value.localNovels[0],
-          author: "ReTale Demo",
-          coverImage: "",
+          author: demoBookById[key]?.author || "ReTale Demo",
+          coverImage: demoBookById[key] ? `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/covers/${key}.svg` : "",
           knowledgeStatus: db.knowledge[key]?.deleted ? "missing" : "ready",
           updatedAt: seedDate,
           wordCount: value.localChapters.reduce((n, c) => n + c.wordCount, 0),
@@ -978,31 +1000,37 @@ export function createDemoApi(
         return commit({ ok: true, job: job || null });
       }
       const turn = body.roleplayTurn;
+      const replyIndex = (body.roleplayMessages || []).filter((m: Row) => m.role === 'assistant').length;
+      const selectedCharacter = novel?.localCharacters.find(c => c.name === turn?.counterpartName);
+      const defaultCharacter = novel?.localCharacters[1];
+      const reply = selectedCharacter && selectedCharacter.name !== defaultCharacter?.name
+        ? `${selectedCharacter.name}：${selectedCharacter.goal}。${selectedCharacter.note}`
+        : scene.roleplay.responses[replyIndex % scene.roleplay.responses.length];
       const content = turn
         ? JSON.stringify({
             blocks: turn.dialogueOnly
               ? [
                   {
                     type: "counterpart",
-                    text: "我一直等着把钥匙交给你。你问起那封信的时候，我就知道，你和他一样，不会轻易放弃。\n\n你先留在我身边。走廊尽头的门下面有一束光，也许那就是我们一直在找的答案。",
+                    text: reply,
                   },
                 ]
               : [
                   {
                     type: "narration",
-                    text: "雨声渐渐远去。她将钥匙放在两人之间，目光落在旧门的锁孔上。",
+                    text: scene.roleplay.narration,
                   },
-                  { type: "player", text: turn.dialogue || "我们一起进去。" },
+                  { type: "player", text: turn.dialogue || scene.roleplay.opening },
                   {
                     type: "counterpart",
-                    text: "“好。这一次，我会把知道的都告诉你。”",
+                    text: reply,
                   },
                 ],
           })
-        : generatedText;
+        : (body.continueBlockId || body.rewriteLaunchSource === "continue" ? scene.continueText : scene.rewriteText);
       const result = {
-        title: "一起赴约",
-        summary: "主角选择留下，故事沿着另一种可能展开。",
+        title: scene.titles.rewrite,
+        summary: scene.instruction,
         content,
         inputTokens: 1280,
         outputTokens: 320,
@@ -1063,7 +1091,7 @@ export function createDemoApi(
             : kind;
         const { node, detail } = addNode(novelId, nodeKind, {
           ...body,
-          targetChapterNo: target?.order || 8,
+          targetChapterNo: target?.order || novel?.localChapters.length || 8,
         });
         return commit({
           ...detail,
@@ -1099,7 +1127,8 @@ export function createDemoApi(
         return commit(appendMessage(detail, body));
       }
       if (method === "PUT" || parts.at(-1) === "revise") {
-        const text = body.generatedText || futureText;
+        const detailScene = scenarioFor(detail.novelId);
+        const text = body.generatedText || (kind === "future_jump" ? detailScene.futureText : kind === "what_if" ? detailScene.whatIfText : detailScene.continueText);
         const revision = {
           ...detail.latestRevision,
           revisionNo: detail.latestRevisionNo + 1,
@@ -1142,7 +1171,7 @@ export function createDemoApi(
           sourceType: "LIBRARY",
           sourceId: key,
           title: n.localNovels[0].title,
-          author: "ReTale Demo",
+          author: demoBookById[key]?.author || "ReTale Demo",
           chapterCount: n.localChapters.length,
           estimatedTokens: n.localChapters.reduce(
             (total, c) => total + c.wordCount,
@@ -1190,18 +1219,21 @@ export function createDemoApi(
         return commit({ ok: true, card: db.skills[cardId!] });
       }
       if (method === "POST") {
+        const sourceNovelId = body.sourceRefs?.find((source: Row) => source.sourceType === 'LIBRARY')?.sourceId
+          || (parts[1] === 'material-libraries' ? parts[2] : 'demo-mist');
         const card = cardId
           ? db.skills[cardId]
           : makeSkill(
               id("skill"),
               body.instruction?.slice(0, 24) || "新的写作技巧",
+              sourceNovelId,
             );
         card.userInstruction =
           body.instruction || body.userInstruction || card.userInstruction;
         db.skills[card.id] = card;
         const job = {
           id: id("skill-job"),
-          libraryId: "demo-mist",
+          libraryId: card.libraryId,
           libraryVersion: "1",
           userInstruction: card.userInstruction,
           modelConfigId: "demo",

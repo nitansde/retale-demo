@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640" role="img" aria-label="西游记大闹天宫">
+ <title>西游记大闹天宫</title>
+ <rect width="1200" height="640" fill="#241e12"/>
+ <g stroke="#f5d68f" opacity=".1"><path d="M0 64h1200M0 576h1200M64 0v640M1136 0v640"/><circle cx="1060" cy="280" r="350" fill="none"/></g>
+ <g style="color:#f5d68f" fill="none" stroke="#f5d68f" stroke-width="5" opacity=".19"><path d="m831 545 213-454m-181 394 58 27m92-241 58 27m-123 128 58 27m-39-318 58 27" stroke-width="22"/><circle cx="961" cy="314" r="184" stroke-width="2"/><path d="M790 548q20-45 65-20 40-63 77-8 75-12 95 40h99" stroke-width="4"/></g>
+ <g fill="#f5d68f" font-family="Noto Serif SC,Songti SC,STSong,serif">
+ <text x="76" y="116" font-size="26" letter-spacing="3">吴承恩（传统署名）· 公版原著 · 第4—7回</text>
+ <text x="74" y="274" font-size="76" font-weight="650">西游记</text><text x="74" y="376" font-size="76" font-weight="650">大闹天宫</text>
+ <rect x="76" y="433" width="56" height="3"/>
+ <text x="76" y="491" font-size="32">齐天之名，为何无我一席？</text>
+ <text x="76" y="582" font-size="20" letter-spacing="4" opacity=".6">RETALE · STORY COLLECTION</text>
+ </g></svg>

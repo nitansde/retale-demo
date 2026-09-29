@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640" role="img" aria-label="三国演义赤壁">
+ <title>三国演义赤壁</title>
+ <rect width="1200" height="640" fill="#321b16"/>
+ <g stroke="#efbd83" opacity=".1"><path d="M0 64h1200M0 576h1200M64 0v640M1136 0v640"/><circle cx="1060" cy="280" r="350" fill="none"/></g>
+ <g style="color:#efbd83" fill="none" stroke="#efbd83" stroke-width="5" opacity=".19"><path d="M803 412h340l-50 71H855ZM963 412V84L825 361h138m35 51V144l120 216H998M760 520q45-30 90 0t90 0 90 0 90 0m-390 55q45-30 90 0t90 0 90 0 90 0"/></g>
+ <g fill="#efbd83" font-family="Noto Serif SC,Songti SC,STSong,serif">
+ <text x="76" y="116" font-size="26" letter-spacing="3">罗贯中 · 公版原著 · 第43—50回</text>
+ <text x="74" y="274" font-size="76" font-weight="650">三国演义</text><text x="74" y="376" font-size="76" font-weight="650">赤壁</text>
+ <rect x="76" y="433" width="56" height="3"/>
+ <text x="76" y="491" font-size="32">江上风起，局中各怀心事。</text>
+ <text x="76" y="582" font-size="20" letter-spacing="4" opacity=".6">RETALE · STORY COLLECTION</text>
+ </g></svg>

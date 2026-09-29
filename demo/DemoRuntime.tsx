@@ -67,7 +67,7 @@ function ReadyApp({ children }: { children: ReactNode }) {
           className="fixed bottom-0 left-0 z-[90] flex items-center gap-3 rounded-tr-lg border border-line/10 bg-panel/95 px-2 py-1 text-[10px] text-zinc-400"
           role="note"
         >
-          <span>Demo · 虚构数据 / 模拟 AI</span>
+          <span>Demo · 原创 / 公版选篇 · 模拟 AI</span>
           <button
             className="text-violet-200 hover:underline"
             onClick={async () => {
