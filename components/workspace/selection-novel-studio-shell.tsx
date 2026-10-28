@@ -937,7 +937,7 @@ export function SelectionNovelStudio() {
       ) : null}
 
       {toast ? (
-        <div className="fixed inset-x-3 top-[max(0.75rem,env(safe-area-inset-top))] z-[80] sm:left-auto sm:right-4 sm:w-full sm:max-w-sm">
+        <div className="pointer-events-none fixed inset-x-3 top-[max(0.75rem,env(safe-area-inset-top))] z-40 sm:left-auto sm:right-4 sm:w-full sm:max-w-sm">
           <Notice variant={toastVariant} className="shadow-[0_12px_50px_rgb(0_0_0/calc(0.35*var(--shadow-strength)))]">
             {toast}
           </Notice>
@@ -1014,8 +1014,8 @@ export function SelectionNovelStudio() {
           mobileFullscreen
           className="mx-auto max-w-3xl sm:mb-6 sm:rounded-[24px]"
           footer={activeMode === 'rewrite' ? (
-            <div className="flex flex-wrap items-center gap-2" data-testid="rewrite-actions">
-              <button onClick={handleRewrite} disabled={contextCompressing || rewriteFlow.loading || saveContinueBlockPending || presetCompatLibraryLoading} className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-violet-500 px-4 text-sm font-medium text-white transition hover:bg-violet-400 disabled:opacity-60">
+            <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center" data-testid="rewrite-actions">
+              <button onClick={handleRewrite} disabled={contextCompressing || rewriteFlow.loading || saveContinueBlockPending || presetCompatLibraryLoading} className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-violet-500 px-4 text-sm font-medium text-white transition hover:bg-violet-400 disabled:opacity-60 only:col-span-2">
                 {rewriteFlow.loading ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />} {t('workspace.shell.generateVersion')}
               </button>
               {rewriteFlow.loading && rewriteFlow.jobId ? <button onClick={handleAbortRewriteGeneration} className="min-h-11 rounded-xl px-3 text-sm text-rose-200">{t('workspace.action.rewriteAbortedToast')}</button> : null}
@@ -1023,7 +1023,7 @@ export function SelectionNovelStudio() {
                 <button onClick={handleSaveContinueBlock} disabled={saveContinueBlockPending} className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-fuchsia-500/15 px-4 text-sm text-fuchsia-100 disabled:opacity-40">
                   {saveContinueBlockPending ? <><LoaderCircle className="h-4 w-4 animate-spin" />{t('workspace.shell.savePending')}</> : t('workspace.shell.saveAsContinueBlock')}
                 </button>
-                {!isContinueBlockContinuation ? <button onClick={handleCreateWhatIf} disabled={saveContinueBlockPending} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 text-sm text-violet-200 transition hover:bg-violet-500/10 disabled:opacity-40">
+                {!isContinueBlockContinuation ? <button onClick={handleCreateWhatIf} disabled={saveContinueBlockPending} className="col-span-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 text-sm text-violet-200 transition hover:bg-violet-500/10 disabled:opacity-40">
                   <GitBranch aria-hidden="true" className="h-4 w-4 shrink-0" />
                   {t('workspace.shell.createWhatIf')}
                 </button> : null}

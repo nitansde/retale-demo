@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { BookOpen, Check, MousePointer2, Sparkles } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import { createPortal } from 'react-dom';
+import { useDesktopWorkspaceLayout } from '@/components/workspace/use-desktop-workspace-layout';
 import { useNovelStore } from '@/store/novel-store';
 import { useI18n } from '@/lib/i18n/provider';
 import styles from './FirstRunTutorial.module.css';
@@ -44,10 +46,37 @@ const copy = {
   },
 };
 
+const mobileCopy: Record<'zh' | 'en', Record<Step, string>> = {
+  zh: {
+    welcome: copy.zh.welcome[1],
+    book: '任选一本，直接进入正文。',
+    select: '点下方按钮试改一段，也可长按正文自由选字。',
+    rewrite: '点击底部「魔改」，改写你选中的片段。',
+    generate: '在下方写下新走向，再点底部「生成版本」。',
+    save: '往下看生成结果，满意后点底部「保存为续写块」。',
+    knowledge: '分支已保存！接下来看看这本书的人物与设定。',
+    inspect: '点人物卡看详情，也可切换设定、时间线。',
+    explore: '自由探索，或返回正文继续魔改。',
+  },
+  en: {
+    welcome: copy.en.welcome[1],
+    book: 'Choose any book to start reading.',
+    select: 'Try a passage below, or long-press the prose to choose your own.',
+    rewrite: 'Tap Rewrite in the bottom bar to change your selection.',
+    generate: 'Describe a new direction below, then tap Generate version.',
+    save: 'Scroll to read the result, then tap Save as continue block.',
+    knowledge: 'Branch saved! Next, explore this book’s characters and setting.',
+    inspect: 'Tap a character for details, or explore settings and the timeline.',
+    explore: 'Explore freely, or return to prose to keep rewriting.',
+  },
+};
+
 export function FirstRunTutorial() {
   const { locale, t } = useI18n();
+  const mobile = !useDesktopWorkspaceLayout();
   const text = copy[locale];
   const pathname = usePathname();
+  const currentChapterId = useNovelStore(state => state.currentChapterId);
   const currentNovelId = useNovelStore(state => state.currentNovelId);
   const currentTitle = useNovelStore(state => state.localNovels.find(novel => novel.id === state.currentNovelId)?.title || '');
   const isLibrary = pathname === '/' || pathname.replace(/\/$/, '').endsWith('/library');
@@ -62,6 +91,8 @@ export function FirstRunTutorial() {
   const [hasSavedRewrite, setHasSavedRewrite] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const card = useRef<HTMLElement>(null);
+  const [mobileHost, setMobileHost] = useState<HTMLElement | null>(null);
+  const sampleRequested = useRef<string | null>(null);
 
   function finish(status: 'skipped' | 'completed') {
     try { localStorage.setItem(STORAGE_KEY, status); } catch { /* The tutorial can still close without browser storage. */ }
@@ -71,7 +102,7 @@ export function FirstRunTutorial() {
   useEffect(() => {
     if (!step) return;
     function keydown(event: KeyboardEvent) {
-      if (event.key === 'Escape') finish('skipped');
+      if (event.key === 'Escape' && !find('.dialog-surface')) finish('skipped');
     }
     document.addEventListener('keydown', keydown);
     return () => document.removeEventListener('keydown', keydown);
@@ -85,6 +116,20 @@ export function FirstRunTutorial() {
       const save = actions && Array.from(actions.querySelectorAll('button')).find(button => visible(button) && button.textContent?.trim() === t('workspace.shell.saveAsContinueBlock'));
       const rewrite = find(`${testId('workspace-chapter-rewrite-entry')}:not(:disabled)`);
       const panel = find(testId('workspace-reference-panel'));
+      const dialog = Array.from(document.querySelectorAll<HTMLElement>('.dialog-surface')).filter(visible).at(-1);
+      const relevantDialog = dialog && (dialog.contains(actions ?? null) || dialog.contains(panel ?? null));
+      // Inline slots keep the guide in the same scroll/focus context as the task.
+      setMobileHost(dialog
+        ? relevantDialog ? dialog.querySelector<HTMLElement>('[data-demo-tutorial-slot="dialog"]') : null
+        : document.querySelector<HTMLElement>('[data-demo-tutorial-slot="workspace"]'));
+      if (sampleRequested.current) {
+        if (sampleRequested.current !== `${currentNovelId}:${currentChapterId}` || actions || isLibrary) sampleRequested.current = null;
+        else if (rewrite) {
+          sampleRequested.current = null;
+          rewrite.click();
+          return;
+        }
+      }
       // A save belongs to the book where it was requested, never to another open book.
       if (saveRequested.current && saveRequested.current !== currentNovelId) saveRequested.current = null;
       if (!isLibrary && !actions && saveRequested.current === currentNovelId && find(testId('workspace-continue-block-view'))) {
@@ -96,19 +141,23 @@ export function FirstRunTutorial() {
       // Derive guidance from the actual view, independently of the previous step.
       // Existing branches, graph views and switching books must not strand the tour.
       const nextStep: Step = isLibrary ? 'book'
-        : actions ? (save && !save.hasAttribute('disabled') ? 'save' : 'generate')
+        : actions ? (save ? 'save' : 'generate')
         : panel && (knowledgeRequested.current === currentNovelId || panel.closest('[role="dialog"]')) ? 'inspect'
         : saved ? 'knowledge'
         : reader ? (rewrite ? 'rewrite' : 'select')
         : 'explore';
       setStep(nextStep);
+      if (mobile && nextStep === 'save' && step !== 'save') {
+        // A completed generation should reveal its result, once per request.
+        requestAnimationFrame(() => find(testId('rewrite-result'))?.scrollIntoView({ block: 'start', behavior: 'instant' }));
+      }
       const target = nextStep === 'select' ? reader
         : nextStep === 'rewrite' ? rewrite
         : nextStep === 'generate' ? find(`${testId('workspace-action-overlay')} textarea`)
         : nextStep === 'save' ? save
         : nextStep === 'inspect' ? panel : undefined;
       // Never scroll the visitor back to a particular book or chapter.
-      if (target) {
+      if (target && !mobile) {
         const rect = target.getBoundingClientRect();
         const top = Math.max(4, rect.top - 4), left = Math.max(4, rect.left - 4);
         const next = { top, left, width: Math.max(0, Math.min(innerWidth - 4, rect.right + 4) - left), height: Math.max(0, Math.min(innerHeight - 4, rect.bottom + 4) - top) };
@@ -125,13 +174,14 @@ export function FirstRunTutorial() {
     const timer = window.setInterval(update, 200);
     document.addEventListener('click', clicked, true);
     return () => { clearInterval(timer); document.removeEventListener('click', clicked, true); };
-  }, [step, t, currentNovelId, isLibrary]);
+  }, [step, t, currentNovelId, currentChapterId, isLibrary, mobile]);
 
   function selectSample() {
     const reader = find(testId('workspace-chapter-reader'));
     const paragraph = reader && Array.from(reader.querySelectorAll('p')).find(element => element.textContent?.trim());
     if (!reader || !paragraph) return;
-    paragraph.scrollIntoView({ block: 'center', behavior: 'instant' });
+    if (mobile) sampleRequested.current = `${currentNovelId}:${currentChapterId}`;
+    else paragraph.scrollIntoView({ block: 'center', behavior: 'instant' });
     const range = document.createRange();
     range.selectNodeContents(paragraph);
     const selection = window.getSelection();
@@ -156,19 +206,23 @@ export function FirstRunTutorial() {
   function chooseChapter() {
     knowledgeRequested.current = null;
     clickLabeledButton(t('workspace.context.close'));
-    const bodyButton = Array.from(document.querySelectorAll(`${testId('workspace-chapter-view-toggle')} button`)).find(button => visible(button) && button.textContent?.trim() === t('workspace.centerPane.bodyTab'));
+    const bodyButton = Array.from(document.querySelectorAll(`${testId('workspace-chapter-view-toggle')} button, ${testId('workspace-mobile-toolbar')} button`)).find(button => visible(button) && button.textContent?.trim() === t('workspace.centerPane.bodyTab'));
     if (bodyButton instanceof HTMLElement) bodyButton.click();
     else clickLabeledButton(t('workspace.header.openChapters'));
   }
 
   if (!step) return null;
   const index = steps.indexOf(step);
-  if (collapsed && step !== 'book') return <div className={styles.root} data-testid="first-run-tutorial" data-step={step}>
+  const inline = mobile && step !== 'welcome';
+  const renderGuide = (guide: React.ReactNode) => inline && !isLibrary
+    ? mobileHost?.isConnected ? createPortal(guide, mobileHost) : null
+    : guide;
+  if (collapsed && step !== 'book') return renderGuide(<div className={`${styles.root} ${inline ? styles.inline : ''}`} data-testid="first-run-tutorial" data-step={step}>
     <button className={styles.resume} onClick={() => setCollapsed(false)}>{text.resume}</button>
-  </div>;
-  return <div className={`${styles.root} ${step === 'book' ? styles.library : ''}`} data-testid="first-run-tutorial" data-step={step}>
+  </div>);
+  return renderGuide(<div className={`${styles.root} ${step === 'book' ? styles.library : ''} ${inline ? styles.inline : ''}`} data-testid="first-run-tutorial" data-step={step}>
     {step === 'welcome' && <div className={styles.scrim} />}
-    {step !== 'welcome' && box && box.height > 0 && <div className={styles.spotlight} style={box} aria-hidden="true" />}
+    {!mobile && step !== 'welcome' && box && box.height > 0 && <div className={styles.spotlight} style={box} aria-hidden="true" />}
     <section ref={card} onKeyDown={event => {
       if (step !== 'welcome' || event.key !== 'Tab') return;
       const buttons = card.current?.querySelectorAll<HTMLElement>('button:not(:disabled), a[href]');
@@ -180,18 +234,18 @@ export function FirstRunTutorial() {
       <div className={styles.heading}><span>{text.label}{index >= 0 && ` · ${index + 1} / ${steps.length}`}</span><div className={styles.headingActions}>{step !== 'welcome' && step !== 'book' && <button type="button" onClick={() => setCollapsed(true)}>{text.collapse}</button>}<button type="button" onClick={() => finish('skipped')}>{text.skip}</button></div></div>
       {step !== 'book' && step !== 'welcome' && currentTitle && <p className={styles.bookTitle} data-testid="tutorial-current-book">{text.current} · {currentTitle}</p>}
       <div className={styles.scene} aria-hidden="true"><BookOpen size={30} /><div className={styles.lines}><i /><i /><i /></div><MousePointer2 className={styles.cursor} size={20} /><Sparkles className={styles.spark} size={24} />{step === 'inspect' && <Check size={24} />}</div>
-      <div key={step} className={styles.content} aria-live="polite"><h2>{text[step][0]}</h2><p>{text[step][1]}</p></div>
+      <div key={step} className={styles.content} aria-live="polite"><h2>{text[step][0]}</h2><p>{inline ? mobileCopy[locale][step] : text[step][1]}</p></div>
       {index >= 0 && <div className={styles.progress} aria-hidden="true">{steps.map((item, i) => <span key={item} className={i <= index ? styles.active : ''} />)}</div>}
-      {(step === 'welcome' || step === 'inspect') && <DemoDisclosure compact />}
+      {(step === 'welcome' || step === 'inspect') && <DemoDisclosure compact brief={inline} />}
       <div className={styles.footer}>
         {step === 'welcome' ? <button autoFocus className={styles.primary} onClick={() => setStep(find(testId('workspace-chapter-reader')) ? 'select' : 'book')}>{text.start} →</button>
-          : step === 'select' ? <button className={styles.primary} onMouseDown={event => event.preventDefault()} onClick={selectSample}>{text.sample} →</button>
+          : step === 'select' ? <button className={styles.primary} onMouseDown={event => event.preventDefault()} onClick={selectSample}>{mobile ? locale === 'en' ? 'Select & rewrite a passage' : '选一段并魔改' : text.sample} →</button>
           : step === 'knowledge' ? <button className={styles.primary} onClick={openKnowledge}>{text.open} →</button>
           : step === 'explore' || (step === 'inspect' && !hasSavedRewrite) ? <button className={styles.primary} onClick={chooseChapter}>{text.chapters} →</button>
           : step === 'inspect' ? <button className={styles.primary} onClick={() => finish('completed')}>{text.finish} <Check size={16} /></button>
           : <span className={styles.hint}>{text.waiting}</span>}
       </div>
-      {(step === 'select' || step === 'rewrite' || step === 'explore') && <button className={styles.secondary} onClick={openKnowledge}>{text.open} →</button>}
+      {!mobile && (step === 'select' || step === 'rewrite' || step === 'explore') && <button className={styles.secondary} onClick={openKnowledge}>{text.open} →</button>}
     </section>
-  </div>;
+  </div>);
 }

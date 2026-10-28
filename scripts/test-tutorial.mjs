@@ -1,4 +1,4 @@
-import { chromium, expect } from '@playwright/test';
+import { chromium, devices, expect } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { build } from 'esbuild';
 import { createRequire } from 'node:module';
@@ -14,7 +14,7 @@ try {
   for (const book of demoBooks) for (const mobile of [false, true]) {
     const en = book.locale === 'en';
     const labels = en ? { start: 'Start tutorial', sample: 'Select the first paragraph', generate: 'Generate version', save: 'Save as continue block', open: 'Open story knowledge', finish: 'Finish and explore' } : { start: '开始体验', sample: '帮我选取第一段', generate: '生成版本', save: '保存为续写块', open: '打开故事知识库', finish: '完成，继续探索' };
-    const context = await browser.newContext({ viewport: mobile ? { width: 390, height: 844 } : { width: 1440, height: 1000 }, reducedMotion: mobile ? 'reduce' : 'no-preference' });
+    const context = await browser.newContext({ ...(mobile ? devices['iPhone 13'] : { viewport: { width: 1440, height: 1000 } }), reducedMotion: mobile ? 'reduce' : 'no-preference' });
     await context.addInitScript(locale => localStorage.setItem('retale.locale', locale), en ? 'en' : 'zh');
     const page = await context.newPage();
     page.setDefaultTimeout(20000);
@@ -30,13 +30,18 @@ try {
     await page.getByRole('button').filter({ has: page.getByRole('heading', { name: book.title, exact: true }) }).click();
     await step('select');
     await expect(page.getByTestId('tutorial-current-book')).toContainText(book.title);
-    await tutorial.getByRole('button', { name: new RegExp(labels.sample) }).click();
-    await step('rewrite');
-    await page.getByTestId('workspace-chapter-rewrite-entry').filter({ visible: true }).first().click();
+    if (mobile) {
+      await tutorial.getByRole('button', { name: en ? /Select & rewrite a passage/ : /选一段并魔改/ }).tap();
+    } else {
+      await tutorial.getByRole('button', { name: new RegExp(labels.sample) }).click();
+      await step('rewrite');
+      await page.getByTestId('workspace-chapter-rewrite-entry').filter({ visible: true }).first().click();
+    }
     await step('generate');
     await page.getByTestId('workspace-action-overlay').locator('textarea').first().fill('让主角换一种选择，主动说出真相。');
     await page.getByTestId('rewrite-actions').getByRole('button', { name: labels.generate, exact: true }).click();
     await step('save');
+    if (mobile) await expect(page.getByTestId('rewrite-result')).toBeInViewport();
     await page.screenshot({ path: `test-results/tutorial-${book.id}-${mobile ? 'mobile' : 'desktop'}-save.png` });
     await page.getByTestId('rewrite-actions').getByRole('button', { name: labels.save, exact: true }).click();
     await step('knowledge');

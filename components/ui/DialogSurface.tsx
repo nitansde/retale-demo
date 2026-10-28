@@ -208,7 +208,7 @@ export function DialogSurface({
           ) : null}
         </div>
         {description ? <p id={descriptionId} className="mt-2 shrink-0 text-sm leading-6 text-zinc-400">{description}</p> : null}
-        <div data-testid="dialog-content" className={cn('mt-5 min-h-0 flex-1 overflow-y-auto overscroll-contain pb-5', !footer && 'pb-[max(1.25rem,env(safe-area-inset-bottom))]', contentClassName)}>{children}</div>
+        <div data-testid="dialog-content" className={cn('mt-5 min-h-0 flex-1 overflow-y-auto overscroll-contain pb-5', !footer && 'pb-[max(1.25rem,env(safe-area-inset-bottom))]', contentClassName)}><div data-demo-tutorial-slot="dialog" className="lg:hidden" />{children}</div>
         {footer ? <div className="-mx-5 shrink-0 border-t border-line/10 bg-panel px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]" data-testid="dialog-footer">{footer}</div> : null}
       </div>
     </div>,

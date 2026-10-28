@@ -19,7 +19,7 @@ export function LibraryPageShell({ title, description, children }: {
     <main className="min-h-screen bg-background px-4 py-6 text-zinc-100 sm:px-6 sm:py-8">
       <div className="mx-auto max-w-7xl">
         <header className="mb-8">
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-2 [&_button]:min-h-11">
             <p className="whitespace-nowrap text-sm uppercase tracking-[0.12em] text-zinc-500 sm:tracking-[0.28em]">{t('library.eyebrow')}</p>
             <LanguageSwitcher />
           </div>

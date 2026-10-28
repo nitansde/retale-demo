@@ -288,6 +288,26 @@
     "components/timeline/BranchBlock.tsx": {
       "sha256": "457b8efa79f041f5854ca5db8ddade3acd5b69581e47c4135d644bd2f2e42ef9",
       "reason": "User-requested directory UX fix: contextual delete actions without a permanent column, clean card backgrounds, and keyboard focus affordances; preserve mobile swipe deletion."
+    },
+    "components/library/project-grid.tsx": {
+      "sha256": "e19406eb4696b56974834e5da6d5a1e46c1399430bc2bc8eefb67311c637ddd8",
+      "reason": "Open demo books in prose view even when a prior graph preference was saved."
+    },
+    "components/ui/DialogSurface.tsx": {
+      "sha256": "c7d8dfc76f6c669d25d7000dac9046abcfa8c1ea1255130f56bef9e020ebaf1c",
+      "reason": "Provide an inline mobile tutorial slot inside the dialog scroll and focus boundary."
+    },
+    "components/workspace/WorkspaceHeader.tsx": {
+      "sha256": "e9209086e1964cfa31545568bca21d415383914f80abe8ea0b9054b99c46448e",
+      "reason": "Provide an inline mobile tutorial slot below the workspace header without covering prose or navigation."
+    },
+    "components/workspace/selection-novel-studio-shell.tsx": {
+      "sha256": "1538a9c82fde5547ed1248d7546c411b518df1d2870091952135f96d740ad19e",
+      "reason": "Keep mobile rewrite actions readable and keep transient notices below dialogs without intercepting touches."
+    },
+    "components/library/LibraryPageShell.tsx": {
+      "sha256": "ac48921466d277908cdcee0d613fd86c8fc3a7a8bf54ba5c81a8530bc2b63d85",
+      "reason": "Wrap the library language switcher on narrow screens and keep its touch targets at least 44 pixels tall."
     }
   }
 }

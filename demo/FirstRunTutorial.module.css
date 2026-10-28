@@ -43,3 +43,27 @@
 .bookTitle { font-size: 12px; line-height: 1.6; color: var(--color-violet-400); margin-top: 4px; overflow-wrap: anywhere; }
 .secondary { display: block; min-height: 40px; width: 100%; color: var(--color-violet-400); font-size: 12px; cursor: pointer; margin-top: 6px; }
 .resume { position: absolute; top: max(8px, env(safe-area-inset-top)); right: 12px; pointer-events: auto; border: 1px solid var(--color-violet-400); background: var(--background); color: var(--foreground); border-radius: 16px; padding: 8px 14px; min-height: 40px; font-size: 12px; cursor: pointer; }
+
+/* On phones/tablets the guide occupies real space in the current page/dialog. */
+.inline { position: relative; inset: auto; z-index: auto; padding: 0 12px 12px; }
+.inline .card { position: relative; inset: auto; transform: none; width: 100%; max-width: none; max-height: none; padding: 10px 12px 12px; border-radius: 14px; box-shadow: none; background: color-mix(in srgb, var(--color-violet-400) 5%, var(--background)); }
+.inline .heading { min-height: 36px; gap: 6px; }
+.inline .headingActions { gap: 8px; }
+.inline .heading button { min-height: 44px; }
+.inline .scene, .inline .progress, .inline .bookTitle, .inline .hint { display: none; }
+.inline .content { animation: none; }
+.inline .content h2 { font-size: 14px; margin-bottom: 2px; }
+.inline .content p { font-size: 12px; line-height: 1.6; }
+.inline .footer { margin-top: 8px; }
+.inline .footer:has(.hint) { display: none; }
+.inline .secondary { min-height: 44px; margin-top: 0; }
+.inline .resume { position: static; width: 100%; border-radius: 12px; min-height: 44px; }
+.inline.library { padding: 8px 12px; }
+.inline.library .card { padding-block: 4px 10px; }
+.inline.library .content h2 { display: none; }
+:global([data-demo-tutorial-slot="dialog"]) .inline { padding: 0 0 14px; }
+@media (max-width: 1023px) {
+  .welcome { padding: 20px; max-height: calc(100dvh - 32px); }
+  .welcome .scene { height: 44px; }
+  .welcome .heading button { min-height: 44px; }
+}

@@ -12,6 +12,7 @@ import { useI18n } from '@/lib/i18n/provider'
 import { toUserFacingWorkspaceError } from '@/lib/workspace-user-facing-errors'
 import { useNovelStore } from '@/store/novel-store'
 import type { LibrarySummary } from '@/store/novel-store-types'
+import { readBrowserWorkspacePreferences, writeBrowserWorkspacePreferences } from '@/lib/browser-preferences'
 
 export function resolveOpenNovelChapter(
   localChapters: Array<{
@@ -181,6 +182,8 @@ export function ProjectGrid() {
         return false
       }
       if (!ownsRequest()) return false
+      // Opening a demo book is a reading entry point, even after browsing its graph.
+      writeBrowserWorkspacePreferences({ ...readBrowserWorkspacePreferences(), centerPaneView: 'body' })
       router.push('/workspace')
       return true
     } catch (error) {

@@ -174,6 +174,7 @@ export function WorkspaceHeader({
         </div>
       </DialogSurface>
     </header>
+    <div data-demo-tutorial-slot="workspace" className="lg:hidden" />
     {!hideMobileToolbar ? (
       <nav aria-label={t('workspace.mobile.navigation')} data-testid="workspace-mobile-toolbar" className="fixed inset-x-0 bottom-0 z-30 border-t border-line/8 bg-panel px-3 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] lg:hidden">
         {mobileSelectionActions || <div className="flex items-center justify-around gap-1">
