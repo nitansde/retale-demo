@@ -133,7 +133,8 @@ try {
   await expect(page.getByRole('button', { name: new RegExp(book.skill.title) })).toBeVisible()
   await page.screenshot({ path: 'test-results/writing-skills.png', fullPage: true })
   console.log('PASS writing skill studio')
-  await page.getByRole('button', { name: '重置演示', exact: true }).click()
+  await expect(page.getByRole('note')).toHaveCount(0)
+  await page.goto(`${url}/`)
   await expect(page.getByRole('heading', { name: book.title })).toBeVisible()
   await page.setViewportSize({ width: 390, height: 844 })
   await page.getByRole('button').filter({ has: page.getByRole('heading', { name: secondBook.title }) }).click()
@@ -142,7 +143,7 @@ try {
   await expect(page.getByTestId('workspace-mobile-toolbar')).toBeVisible()
   await page.screenshot({ path: 'test-results/mobile.png', fullPage: true })
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
-  console.log('PASS second novel, reset, mobile viewport')
+  console.log('PASS second novel, unobstructed mobile viewport')
   expect(errors).toEqual([])
 } catch (error) {
   console.error(await page.locator('body').innerText())

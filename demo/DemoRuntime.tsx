@@ -60,7 +60,6 @@ export function DemoRuntime({ children }: { children: ReactNode }) {
 }
 
 function ReadyApp({ children }: { children: ReactNode }) {
-  const { locale } = useI18n();
   const [preferences] = useState(() => {
     const cookies = Object.fromEntries(
       document.cookie.split("; ").map((item) => {
@@ -80,28 +79,6 @@ function ReadyApp({ children }: { children: ReactNode }) {
     <ThemePreferencesProvider initialTheme={preferences.theme}>
       <FontPreferencesProvider initialPreferences={preferences.fonts}>
         {children}
-        <div
-          className="fixed bottom-0 left-0 z-[90] flex items-center gap-3 rounded-tr-lg border border-line/10 bg-panel/95 px-2 py-1 text-[10px] text-zinc-400"
-          role="note"
-        >
-          <span>{locale === 'en' ? 'Demo · Originals & classics · Simulated AI' : 'Demo · 原创 / 公版选篇 · 模拟 AI'}</span>
-          <button
-            className="text-violet-200 hover:underline"
-            onClick={async () => {
-              const { resetDemo } = await import("./browser");
-              await resetDemo();
-              // A document reload also clears the upstream Zustand store and API caches.
-              window.history.replaceState(
-                null,
-                "",
-                `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/`,
-              );
-              window.location.reload();
-            }}
-          >
-            {locale === 'en' ? 'Reset demo' : '重置演示'}
-          </button>
-        </div>
       </FontPreferencesProvider>
     </ThemePreferencesProvider>
   );
