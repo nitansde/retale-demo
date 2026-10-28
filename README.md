@@ -36,7 +36,7 @@ Use the existing **English** language switch in the library. Six independently a
 
 The four originals use distinct voices: first-person paramedic humour, wary romantic bargaining, a gently comic third-person mystery, and intimate academic horror. These are compact demo episodes, not full-length novels. Each English book has its own cast, relationships, lore, chapter events, graph evidence, writing technique and six seeded branches. English books also use English prompt presets, mock context and roleplay responses. The model remains simulated.
 
-Public-domain text provenance, download checksums and editorial processing are recorded in [sources.txt](public/sources.txt). Original excerpts stay intact; new counterfactual scenes are explicitly labelled. Edition 3 added the English collection. Edition 4 retires the two prototype demos and their associated data while preserving all other books, edits, visitor imports and intentional deletions. “Reset demo” restores both collections and retains the selected UI language.
+Public-domain text provenance, download checksums and editorial processing are recorded in [sources.txt](public/sources.txt). Original excerpts stay intact; new counterfactual scenes are explicitly labelled. Edition 3 added the English collection. Edition 4 retires the two prototype demos and their associated data while preserving all other books, edits, visitor imports and intentional deletions. Clearing this site’s browser data restores both collections.
 
 ## 随章节推进的知识库
 
@@ -56,6 +56,8 @@ npm run dev
 ```
 
 访问 http://localhost:3000 。静态演示由 `demo/` 数据适配层和 MSW Service Worker 响应原版页面的 API 请求。编辑、TXT 导入、分支和对话保存在当前浏览器 localStorage；清除此站点的浏览器数据可恢复初始数据。原版 TXT 分章、预设导入解析、主题、字体和中英文切换代码均直接复用。
+
+首次打开会显示可跳过的新手动画引导，带你选取原文、生成并保存第一个魔改分支，再查看故事知识库。完成或跳过后不再自动弹出；进度标记保存在当前浏览器。支持中英文、手机操作与系统减少动画设置。可用 `npm run test:tutorial` 在 3000 端口验证完整引导。
 
 ## 演示边界
 

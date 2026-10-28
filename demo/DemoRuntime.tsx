@@ -17,6 +17,7 @@ import { useI18n } from '@/lib/i18n/provider';
 import { usePathname } from 'next/navigation';
 import { useNovelStore } from '@/store/novel-store';
 import { setDemoLocale } from './locale';
+import { FirstRunTutorial } from './FirstRunTutorial';
 
 let ready: Promise<unknown> | undefined;
 
@@ -79,6 +80,7 @@ function ReadyApp({ children }: { children: ReactNode }) {
     <ThemePreferencesProvider initialTheme={preferences.theme}>
       <FontPreferencesProvider initialPreferences={preferences.fonts}>
         {children}
+        <FirstRunTutorial />
       </FontPreferencesProvider>
     </ThemePreferencesProvider>
   );

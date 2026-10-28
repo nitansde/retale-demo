@@ -11,6 +11,7 @@ await build({stdin:{contents:'export {englishBooks as demoBooks} from "./demo/ca
 const {demoBooks}=createRequire(import.meta.url)(outfile)
 const browser=await chromium.launch()
 const page=await browser.newPage({viewport:{width:1440,height:1050}})
+await page.addInitScript(() => localStorage.setItem('retale.demo.tutorial.v1', 'skipped'))
 page.setDefaultTimeout(20000)
 const errors=[]
 page.on('pageerror',e=>errors.push(e.message))

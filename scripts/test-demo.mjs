@@ -15,6 +15,7 @@ const url = process.env.DEMO_TEST_URL || 'http://localhost:3000'
 const browser = await chromium.launch()
 const errors = []
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } })
+await page.addInitScript(() => localStorage.setItem('retale.demo.tutorial.v1', 'skipped'))
 // Optional real snapshot from a previously deployed edition exercises browser migration as well.
 if (process.env.DEMO_SAVED_DB_PATH) {
   const saved = await readFile(process.env.DEMO_SAVED_DB_PATH, 'utf8')

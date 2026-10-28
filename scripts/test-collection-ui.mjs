@@ -11,6 +11,7 @@ await build({stdin:{contents:'export {chineseBooks as demoBooks, catalogVersion}
 const {demoBooks,catalogVersion,createChapterContentFingerprint}=createRequire(import.meta.url)(outfile)
 const browser=await chromium.launch()
 const page=await browser.newPage({viewport:{width:1440,height:1050}})
+await page.addInitScript(() => localStorage.setItem('retale.demo.tutorial.v1', 'skipped'))
 if (process.env.DEMO_SAVED_DB_PATH) {
   const saved = await readFile(process.env.DEMO_SAVED_DB_PATH,'utf8')
   const chapter = JSON.parse(saved).novels['demo-monkey'].localChapters.at(-1)

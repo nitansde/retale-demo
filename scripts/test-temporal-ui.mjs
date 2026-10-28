@@ -5,6 +5,7 @@ const url=(process.env.DEMO_TEST_URL || 'http://localhost:3000/retale-demo').rep
 await mkdir('test-results',{recursive:true})
 const browser=await chromium.launch()
 const page=await browser.newPage({viewport:{width:1600,height:1100}})
+await page.addInitScript(() => localStorage.setItem('retale.demo.tutorial.v1', 'skipped'))
 page.setDefaultTimeout(20000)
 const errors=[]
 page.on('pageerror',e=>errors.push(e.message))
