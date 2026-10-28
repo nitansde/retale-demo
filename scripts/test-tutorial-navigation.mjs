@@ -1,0 +1,64 @@
+import { chromium, expect } from '@playwright/test';
+const browser = await chromium.launch();
+const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+const page = await context.newPage();
+page.setDefaultTimeout(20000);
+const guide = page.getByTestId('first-run-tutorial');
+const step = value => expect(guide).toHaveAttribute('data-step', value);
+const openBook = async title => {
+  await page.getByRole('button').filter({ has: page.getByRole('heading', { name: title, exact: true }) }).click();
+  await step('select');
+  await expect(page.getByTestId('tutorial-current-book')).toContainText(title);
+};
+const library = async () => {
+  await page.getByRole('link', { name: '返回书库', exact: true }).filter({ visible: true }).first().click();
+  await step('book');
+};
+try {
+  await page.goto(process.env.DEMO_TEST_URL || 'http://localhost:3000');
+  await guide.getByRole('button', { name: /开始体验/ }).click();
+  await page.screenshot({ path: 'test-results/tutorial-library-free-choice.png', fullPage: true });
+  await openBook('重生后，侯府全家能听见我的心声');
+  await page.getByTestId('workspace-chapter-view-toggle').getByRole('button', { name: '图谱', exact: true }).click();
+  await step('explore');
+  await guide.getByRole('button', { name: /选择正文继续魔改/ }).click();
+  await step('select');
+  await guide.getByRole('button', { name: /打开故事知识库/ }).click();
+  await step('inspect');
+  await expect(guide.getByRole('button', { name: /完成，继续探索/ })).toHaveCount(0);
+  await guide.getByRole('button', { name: /选择正文继续魔改/ }).click();
+  await step('select');
+  await guide.getByRole('button', { name: '收起', exact: true }).click();
+  await expect(guide.getByRole('button', { name: '继续引导' })).toBeVisible();
+  await guide.getByRole('button', { name: '继续引导' }).click();
+  await guide.getByRole('button', { name: /帮我选取第一段/ }).click();
+  await page.getByTestId('workspace-chapter-rewrite-entry').filter({ visible: true }).click();
+  await step('generate');
+  await page.getByTestId('workspace-action-overlay').getByRole('button', { name: '关闭', exact: true }).click();
+  await expect(guide).toHaveAttribute('data-step', /select|rewrite/);
+  await library();
+  await openBook('西游记·大闹天宫');
+  await page.getByTestId('timeline-node-demo-monkey-whatif-node').click();
+  await step('explore');
+  await guide.getByRole('button', { name: /选择正文继续魔改/ }).click();
+  await page.getByTestId('timeline-chapter-row-demo-monkey-ch-2').filter({ visible: true }).last().getByRole('button').first().click();
+  await step('select');
+  await guide.getByRole('button', { name: /帮我选取第一段/ }).click();
+  await page.getByTestId('workspace-chapter-rewrite-entry').filter({ visible: true }).click();
+  await page.getByTestId('rewrite-actions').getByRole('button', { name: '生成版本', exact: true }).click();
+  await step('save');
+  await page.getByTestId('rewrite-actions').getByRole('button', { name: '保存为续写块', exact: true }).click();
+  await step('knowledge');
+  await library();
+  await openBook('重生后，侯府全家能听见我的心声');
+  await library();
+  await page.getByRole('button').filter({ has: page.getByRole('heading', { name: '西游记·大闹天宫', exact: true }) }).click();
+  await step('knowledge');
+  await guide.getByRole('button', { name: /打开故事知识库/ }).click();
+  await step('inspect');
+  await guide.getByRole('button', { name: /完成，继续探索/ }).click();
+  console.log('PASS arbitrary book choice, graph/branch detours, knowledge first, minimize, cancel rewrite, switch books, per-book saved progress');
+} catch (error) {
+  await page.screenshot({ path: 'test-results/tutorial-navigation-failure.png', fullPage: true });
+  throw error;
+} finally { await browser.close(); }

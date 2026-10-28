@@ -79,8 +79,8 @@ function ReadyApp({ children }: { children: ReactNode }) {
   return (
     <ThemePreferencesProvider initialTheme={preferences.theme}>
       <FontPreferencesProvider initialPreferences={preferences.fonts}>
-        {children}
         <FirstRunTutorial />
+        {children}
       </FontPreferencesProvider>
     </ThemePreferencesProvider>
   );

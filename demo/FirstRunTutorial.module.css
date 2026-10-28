@@ -33,3 +33,13 @@
 @keyframes glow { 50% { box-shadow: 0 0 0 6px rgb(139 92 246 / 16%); } }
 @media (max-width: 640px) { .card { right: 12px; padding: 16px; } .welcome { right: auto; padding: 24px; } .scene { height: 48px; } .content h2 { font-size: 16px; } .content p { font-size: 12px; } .bottom { bottom: max(86px, calc(env(safe-area-inset-bottom) + 76px)); } }
 @media (prefers-reduced-motion: reduce) { .root *, .root *::before { animation: none !important; transition: none !important; } }
+
+/* The library guide participates in page layout so every book remains clickable. */
+.library { position: relative; inset: auto; z-index: auto; padding: 16px 16px 0; }
+.library .card { position: relative; inset: auto; width: 100%; max-width: 1280px; margin: auto; max-height: none; padding: 12px 20px; border-radius: 16px; box-shadow: none; }
+.library .scene, .library .progress, .library .footer { display: none; }
+.library .content h2 { font-size: 15px; margin-bottom: 4px; }
+.headingActions { display: flex; gap: 10px; }
+.bookTitle { font-size: 12px; line-height: 1.6; color: var(--color-violet-400); margin-top: 4px; overflow-wrap: anywhere; }
+.secondary { display: block; min-height: 40px; width: 100%; color: var(--color-violet-400); font-size: 12px; cursor: pointer; margin-top: 6px; }
+.resume { position: absolute; top: max(8px, env(safe-area-inset-top)); right: 12px; pointer-events: auto; border: 1px solid var(--color-violet-400); background: var(--background); color: var(--foreground); border-radius: 16px; padding: 8px 14px; min-height: 40px; font-size: 12px; cursor: pointer; }
