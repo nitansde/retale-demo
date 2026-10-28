@@ -18,6 +18,7 @@ import { usePathname } from 'next/navigation';
 import { useNovelStore } from '@/store/novel-store';
 import { setDemoLocale } from './locale';
 import { FirstRunTutorial } from './FirstRunTutorial';
+import { DemoDisclosure } from './DemoDisclosure';
 
 let ready: Promise<unknown> | undefined;
 
@@ -61,6 +62,8 @@ export function DemoRuntime({ children }: { children: ReactNode }) {
 }
 
 function ReadyApp({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const isLibrary = pathname === '/' || pathname.replace(/\/$/, '').endsWith('/library');
   const [preferences] = useState(() => {
     const cookies = Object.fromEntries(
       document.cookie.split("; ").map((item) => {
@@ -79,6 +82,7 @@ function ReadyApp({ children }: { children: ReactNode }) {
   return (
     <ThemePreferencesProvider initialTheme={preferences.theme}>
       <FontPreferencesProvider initialPreferences={preferences.fonts}>
+        {isLibrary && <DemoDisclosure />}
         <FirstRunTutorial />
         {children}
       </FontPreferencesProvider>

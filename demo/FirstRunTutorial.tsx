@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { useNovelStore } from '@/store/novel-store';
 import { useI18n } from '@/lib/i18n/provider';
 import styles from './FirstRunTutorial.module.css';
+import { DemoDisclosure } from './DemoDisclosure';
 
 const STORAGE_KEY = 'retale.demo.tutorial.v1';
 type Step = 'welcome' | 'book' | 'select' | 'rewrite' | 'generate' | 'save' | 'knowledge' | 'inspect' | 'explore';
@@ -18,7 +19,7 @@ function find(selector: string) {
 
 const copy = {
   zh: {
-    welcome: ['让故事，按你的想法重来', '用一分钟亲手完成第一次魔改，再看看人物、关系和原文依据。演示中的 AI 结果为预先编写，放心尝试。'],
+    welcome: ['让故事，按你的想法重来', '任选一本小说，体验第一次魔改，再看看人物、关系和原文依据。'],
     book: ['01 · 打开一本书', '任选一本小说开始，也可以随时换书。引导会使用你当前打开的小说和章节。'],
     select: ['02 · 选中想改变的片段', '在正文里拖选一段文字；手机上长按后拖动选区。也可以先用下方按钮选取第一段试试。'],
     rewrite: ['03 · 点击「魔改」', '选区已准备好。点击高亮的「魔改」按钮，打开改写面板。'],
@@ -30,7 +31,7 @@ const copy = {
     start: '开始体验', skip: '跳过教程', sample: '帮我选取第一段', open: '打开故事知识库', finish: '完成，继续探索', label: '新手引导', waiting: '可自由操作，引导会跟随当前页面', collapse: '收起', resume: '继续引导', chapters: '选择正文继续魔改', current: '当前小说',
   },
   en: {
-    welcome: ['Give this story a new beginning', 'Make your first rewrite in about a minute, then explore characters, relationships and source evidence. AI results in this demo are prewritten.'],
+    welcome: ['Give this story a new beginning', 'Choose any book, try your first rewrite, then explore characters, relationships and source evidence.'],
     book: ['01 · Open a book', 'Start with any book and switch books whenever you like. The guide follows the book and chapter you open.'],
     select: ['02 · Select a passage', 'Drag to select some prose. On touch screens, long-press and adjust the selection. Or use the button below to try the first paragraph.'],
     rewrite: ['03 · Choose Rewrite', 'Your selection is ready. Click the highlighted Rewrite button to open the editor.'],
@@ -170,7 +171,7 @@ export function FirstRunTutorial() {
     {step !== 'welcome' && box && box.height > 0 && <div className={styles.spotlight} style={box} aria-hidden="true" />}
     <section ref={card} onKeyDown={event => {
       if (step !== 'welcome' || event.key !== 'Tab') return;
-      const buttons = card.current?.querySelectorAll('button');
+      const buttons = card.current?.querySelectorAll<HTMLElement>('button:not(:disabled), a[href]');
       if (!buttons?.length) return;
       const first = buttons[0], last = buttons[buttons.length - 1];
       if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
@@ -181,6 +182,7 @@ export function FirstRunTutorial() {
       <div className={styles.scene} aria-hidden="true"><BookOpen size={30} /><div className={styles.lines}><i /><i /><i /></div><MousePointer2 className={styles.cursor} size={20} /><Sparkles className={styles.spark} size={24} />{step === 'inspect' && <Check size={24} />}</div>
       <div key={step} className={styles.content} aria-live="polite"><h2>{text[step][0]}</h2><p>{text[step][1]}</p></div>
       {index >= 0 && <div className={styles.progress} aria-hidden="true">{steps.map((item, i) => <span key={item} className={i <= index ? styles.active : ''} />)}</div>}
+      {(step === 'welcome' || step === 'inspect') && <DemoDisclosure compact />}
       <div className={styles.footer}>
         {step === 'welcome' ? <button autoFocus className={styles.primary} onClick={() => setStep(find(testId('workspace-chapter-reader')) ? 'select' : 'book')}>{text.start} →</button>
           : step === 'select' ? <button className={styles.primary} onMouseDown={event => event.preventDefault()} onClick={selectSample}>{text.sample} →</button>

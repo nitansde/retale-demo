@@ -1,0 +1,10 @@
+.banner { display: flex; align-items: center; justify-content: space-between; gap: 16px; max-width: 1280px; margin: 16px auto 0; padding: 16px 20px; border: 1px solid color-mix(in srgb, var(--color-violet-400) 25%, transparent); border-radius: 16px; background: color-mix(in srgb, var(--color-violet-400) 6%, var(--background)); }
+.title { margin: 0; font-size: 13px; font-weight: 600; line-height: 1.6; color: var(--foreground); }
+.description { margin: 4px 0 0; font-size: 12px; line-height: 1.8; color: var(--color-zinc-400); }
+.link { display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px 12px; border: 1px solid color-mix(in srgb, var(--color-violet-400) 30%, transparent); border-radius: 10px; color: var(--color-violet-400); font-size: 12px; font-weight: 500; }
+.link:hover { background: color-mix(in srgb, var(--color-violet-400) 12%, transparent); }
+.link:focus-visible { outline: 2px solid var(--color-violet-400); outline-offset: 3px; }
+.compact { margin-top: 16px; padding-top: 14px; border-top: 1px solid color-mix(in srgb, var(--line) 15%, transparent); }
+.compact .link { margin-top: 10px; }
+@media (max-width: 1312px) { .banner { margin-inline: 16px; } }
+@media (max-width: 640px) { .banner { align-items: stretch; flex-direction: column; gap: 10px; padding: 14px 16px; } }
