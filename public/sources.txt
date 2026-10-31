@@ -85,3 +85,7 @@ https://www.gutenberg.org/cache/epub/345/pg345.txt
 Download SHA-256: 96cd16eacdbfebae8fdda5591f66e0cc8ee76be18e0cd1aca02bc00615782d28
 
 Snapshot: demo/catalog/english-public-domain.json. Import script: scripts/import-english-classics.py. Downloads are not needed to build or run the demo.
+
+Voice samples — public/voice/*.mp3
+AI-generated with Fish Audio (model s2.1-pro-free) using the ReTale default voices 学姐, 梓轩, Sarah and Adrin, then levelled to -18 LUFS.
+Mapping: demo/voice-clips.json. Script: scripts/create-voice-samples.mjs.

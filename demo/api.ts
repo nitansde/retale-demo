@@ -156,6 +156,16 @@ export function createDemoApi(
       }
     }
   }
+  if (restored && (db.catalogVersion || 1) < 6) {
+    // Dialogue-only replies are the ones that offer playback; give each seeded reply its sample.
+    for (const detail of Object.values(db.details)) {
+      if (!demoBookById[detail.novelId]) continue;
+      const { reply } = scenarioFor(detail.novelId).roleplay;
+      for (const message of detail.messages ?? []) {
+        if (message.script?.blocks?.some((block: Row) => block.text === reply)) message.script.dialogueOnly = true;
+      }
+    }
+  }
   db.catalogVersion = catalogVersion;
   db.englishPresets ??= makeEnglishPresets();
   const visible = (novelId: string) => !bookLocale(novelId) || bookLocale(novelId) === getLocale();
@@ -447,6 +457,7 @@ export function createDemoApi(
         script: {
           playerName: player.name,
           counterpartName: counterpart.name,
+          dialogueOnly: true,
           blocks: [
             { type: "narration", text: scene.roleplay.narration },
             { type: "counterpart", text: scene.roleplay.reply },

@@ -6,6 +6,8 @@ import { ContextCompressionControl, ContextCompressionWarning } from '@/componen
 import type { ContextCompressionPreview } from '@/lib/context-compression'
 import { DialogSurface } from '@/components/ui/DialogSurface'
 import { useI18n } from '@/lib/i18n/provider'
+import { CharacterPromptTextarea } from '@/components/workspace/CharacterPromptTextarea'
+import type { PromptCharacter } from '@/lib/character-prompt-completion'
 import { cn } from '@/lib/utils'
 import { resolveWorkspaceUserFacingError } from '@/lib/workspace-user-facing-errors'
 import {
@@ -18,6 +20,7 @@ import {
 } from '@/lib/story-branch-types'
 
 type FutureMapOverlayProps = {
+  characters?: PromptCharacter[]
   novelId: string
   branchId: string
   sourceContext: FutureJumpSourceContext
@@ -558,16 +561,18 @@ export function FutureMapOverlay(props: FutureMapOverlayProps) {
                     </summary>
                     <ContextCompressionControl preview={contextPreview.compression} disabled={creating} onBusyChange={setCompressing} onContextChanged={() => setContextRevision((value) => value + 1)} />
                   </details> : null}
-                  <label className="mt-4 block">
+                  <div className="mt-4 block">
                     <span className="text-[11px] uppercase tracking-[0.16em] text-zinc-500">Optional direction</span>
-                    <textarea
+                    <CharacterPromptTextarea
+                      characters={props.characters}
+                      aria-label={t('futureMap.optionalDirectionPlaceholder')}
                       value={userDirection}
-                      onChange={(event) => setUserDirection(event.target.value)}
+                      onValueChange={setUserDirection}
                       rows={4}
                       placeholder={t('futureMap.optionalDirectionPlaceholder')}
                       className="mt-2 w-full rounded-[20px] border border-line/10 bg-surface px-3 py-3 text-sm text-zinc-100 outline-none placeholder:text-zinc-500"
                     />
-                  </label>
+                  </div>
 
                   {createError ? (
                     <div role="alert" data-testid="future-map-create-error" className="mt-4 whitespace-pre-wrap break-words rounded-[20px] border border-rose-400/20 bg-rose-500/10 p-3 text-sm leading-6 text-rose-100">{createError}</div>

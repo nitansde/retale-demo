@@ -6,6 +6,7 @@ import { BridgeSummaryPanel } from '@/components/future-jump/BridgeSummaryPanel'
 import { FutureJumpControlPanel } from '@/components/future-jump/FutureJumpControlPanel'
 import { FutureNodeTextPanel } from '@/components/future-jump/FutureNodeTextPanel'
 import { useI18n } from '@/lib/i18n/provider'
+import type { PromptCharacter } from '@/lib/character-prompt-completion'
 import { formatStoryBranchInstructionPreview } from '@/lib/story-branch-labels'
 import { resolveWorkspaceUserFacingError } from '@/lib/workspace-user-facing-errors'
 import type {
@@ -111,6 +112,7 @@ async function loadFutureJumpBundle(input: { novelId: string; branchId: string; 
 }
 
 export function FutureJumpView(props: {
+  characters?: PromptCharacter[]
   novelId: string
   branchId: string
   runId: string
@@ -271,6 +273,7 @@ export function FutureJumpView(props: {
               generatedTargetText={bundle.detail.generatedTargetText}
             />
             <FutureJumpControlPanel
+              characters={props.characters}
               feedback={feedback}
               onFeedbackChange={setFeedback}
               onRegenerate={handleRegenerate}

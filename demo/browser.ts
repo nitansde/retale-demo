@@ -4,12 +4,14 @@ import { createDemoApi } from "./api";
 import { simplifyClassicDrafts } from "./simplified-classics";
 import { getDemoLocale } from "./locale";
 import { retiredNovelIds } from "./catalog";
+import { installDemoVoice } from "./voice";
 import { removeBrowserWorkspaceNovelSession } from "@/lib/browser-preferences";
 import { CHAPTER_DRAFT_CACHE_STORAGE_KEY } from "@/lib/chapter-draft-cache";
 
 const storageKey = "retale.demo.database.v1";
 const basePath = (process.env.NEXT_PUBLIC_BASE_PATH || "").replace(/\/$/, "");
 let fetchPatched = false;
+let voiceInstalled = false;
 export async function startDemo() {
   let saved: string | null = null;
   try {
@@ -43,6 +45,10 @@ export async function startDemo() {
       return nativeFetch(input, init);
     };
     fetchPatched = true;
+  }
+  if (!voiceInstalled) {
+    installDemoVoice(basePath, getDemoLocale);
+    voiceInstalled = true;
   }
   const worker = setupWorker(
     http.all("*", async ({ request }) => {

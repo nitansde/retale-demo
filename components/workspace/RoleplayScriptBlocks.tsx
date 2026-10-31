@@ -25,6 +25,7 @@ function renderInlineThoughts(text: string, enabled: boolean) {
 export function RoleplayScriptBlocks({ script }: { script: RoleplayScript }) {
   const { t } = useI18n()
   return <div className="space-y-5" data-testid="roleplay-script">
+    {script.voiceInterrupted ? <p className="text-xs text-zinc-500" title={t('voice.partialHint')}>{t('voice.interrupted')}</p> : null}
     {mergeRoleplayNarrationBlocks(script.blocks).map((block, index) => {
       const narration = block.type === 'narration'
       const player = block.type === 'player' || block.type === 'player_thought'

@@ -2,8 +2,11 @@
 
 import { ArrowRight, LoaderCircle, RefreshCcw } from 'lucide-react'
 import { useI18n } from '@/lib/i18n/provider'
+import { CharacterPromptTextarea } from '@/components/workspace/CharacterPromptTextarea'
+import type { PromptCharacter } from '@/lib/character-prompt-completion'
 
 export function FutureJumpControlPanel(props: {
+  characters?: PromptCharacter[]
   feedback: string
   onFeedbackChange: (value: string) => void
   onRegenerate: () => void
@@ -25,16 +28,18 @@ export function FutureJumpControlPanel(props: {
         <span className="rounded-full border border-sky-300/20 bg-shade/20 px-3 py-1 text-[11px] text-sky-100">{t('futureJump.latestRevisionBadge', { count: props.latestRevisionNo })}</span>
       </div>
 
-      <label className="mt-4 block">
+      <div className="mt-4 block">
         <span className="mb-2 block text-sm text-zinc-300">{t('futureJump.revisionFeedback')}</span>
-        <textarea
+        <CharacterPromptTextarea
+          characters={props.characters}
+          aria-label={t('futureJump.revisionFeedback')}
           value={props.feedback}
-          onChange={(event) => props.onFeedbackChange(event.target.value)}
+          onValueChange={props.onFeedbackChange}
           className="min-h-[140px] w-full rounded-[22px] border border-line/10 bg-shade/20 px-4 py-3 text-sm text-zinc-100 outline-none"
           placeholder={t('futureJump.revisionFeedbackPlaceholder')}
           data-testid="future-jump-feedback"
         />
-      </label>
+      </div>
 
       <div className="mt-4 flex flex-wrap gap-2">
         <button

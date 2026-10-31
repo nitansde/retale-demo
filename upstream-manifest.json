@@ -1,12 +1,21 @@
 {
-  "repository": "https://github.com/yinengy/ChatBook",
-  "commit": "444fe4c12b4876c29bb77a188e6afbd8a3b4e6f1",
+  "repository": "https://github.com/nitansde/ReTale",
+  "commit": "f11c255e1260b9f1b753ae001e3b3d2c3e338782",
   "files": {
+    "app/favicon.ico": "2b8ad2d33455a8f736fc3a8ebf8f0bdea8848ad4c0db48a2833bd0f9cd775932",
+    "app/globals.css": "dcccbc84d6bb8dc16262c449bbe54f6c0b7c77fe2ef168f7cc59018d38afae73",
+    "app/library/page.tsx": "0ef8d0276a522774913300735652f2a8436ad7aa52febd6efab5b636ad7e5c37",
+    "app/task/page.tsx": "7f065dfdf70607f96a7e08a0665b30dcee375950e3b5db3da10df7742445e8d6",
+    "app/task/task-abort-button.tsx": "9a33221533d62ba1e35e6bc21101679e146df11ef9009ec5bca418b30e8f65fe",
+    "app/task/task-page-client.tsx": "5fc6d9ca167911583d3d2def623dd856ea6b237bba8f5260f97257d45e659c44",
+    "app/themes.css": "00df8dd964235034fb2d27a9170aae89a0283b110e1f0af27329d41257fff8a8",
+    "app/workspace/page.tsx": "b4cee2bd271fddd887d07ba99bcc308b8b98dd913a76340797fda32ecd0b7b53",
+    "app/writing-skills/page.tsx": "3a922cb03590e00a30434e43d9dbbfa420cd9fd4a7413903398484e5a9a1c457",
     "components/FontPreferencesProvider.tsx": "3bce698e0e0c478a82a46921fba08097bc237fb20dd59b99dda97ff985c42cb6",
     "components/ThemePreferencesProvider.tsx": "f8ee05533690552ad0decc2ec3c807fa6ea3d87dea7b2bba154b8f461e42ed96",
     "components/future-jump/BridgeSummaryPanel.tsx": "61c5ba837dad70893051226a2181bce54c9069b895eea0c50fc6e321b4feed86",
-    "components/future-jump/FutureJumpControlPanel.tsx": "3f559e892da4d055389cb06521d10521548ae5dcdd38ead923750aaf759a1b70",
-    "components/future-jump/FutureJumpView.tsx": "4efa18eb442c2ffa1605ed284fb58f8d166b9d08fb97cb4e467e6511dba9eef1",
+    "components/future-jump/FutureJumpControlPanel.tsx": "37c07c593174060eaf95d27a3c42b72abeee2120b4e4925a9736249bce3b0106",
+    "components/future-jump/FutureJumpView.tsx": "5efeef5f0326f76bcc37aed5ba439ba33dbe9a7ecc68eeeb3c007bef3b30e8cb",
     "components/future-jump/FutureNodeTextPanel.tsx": "c760413020ae56711b7171c56c2eed718a3c0bd170e4f331cf7fa554492de3d7",
     "components/graph/advanced-context-prompt-panel.tsx": "f0814242fea1edcaa343c3116de277fa7723000d329201ebe7a5dec893d81fc5",
     "components/graph/chapter-graph-browser.tsx": "267972bb9513b8367d291b28f6688ee1d0c38e6183ec5640bb080231d8fd1bdf",
@@ -37,10 +46,11 @@
     "components/ui/IconButton.tsx": "00bb7acd0f4ea76441b2ac5f325186d76d2a6aa829f64d00a17cd509681d4987",
     "components/ui/LoadingScreen.tsx": "973c42cb04ab45d9696d7cb751b95b8b89f1c396739c36ea44452ff8dc304a7c",
     "components/ui/Notice.tsx": "5788a9a0407c709aeb35845aeaa15d9fc809b26851ef964cf1f32197d6095eba",
-    "components/what-if/FutureMapOverlay.tsx": "9cd6eebf6f501cee1c27e771810a63df3454a38703d58c14c00dcc28479fa136",
+    "components/what-if/FutureMapOverlay.tsx": "2c400c8c5220e0fd0d6eeb289dd6331d5bd8954591aff230a553f85292a7b095",
     "components/what-if/WhatIfDeltaPanel.tsx": "8e112ac17f797ce93558d3ee0426a3909bc8e22fa2539cee0e5660f00f024534",
     "components/what-if/WhatIfSessionView.tsx": "3b716c9d47bf6fccd5f648e3455f8be46454275cea8b7a4ed74a15ef78995742",
     "components/workspace/BookSearchDialog.tsx": "9fe19a64a855f5a40d2e3985c47aadd2392abfa4ec2a27614c4f24f2dad328ec",
+    "components/workspace/CharacterPromptTextarea.tsx": "65dbf348a6adc68b7b7aabe1c2c437ed551dc9605a411b66b5f09bc07180ff66",
     "components/workspace/ContextCompressionControl.tsx": "06ae37e43770774df320aa4fe653bd64ee79d9bef20f58e3ac02e5dec5f4e3c8",
     "components/workspace/ContinueBlockDetailView.tsx": "2b3029d707c1e1ab16c88647c428e538ad30c0b79aa06f5de3e1052bb9c5a466",
     "components/workspace/LocalEmbeddingWizard.tsx": "eed12bef2dcb2860f980ed609893ade0a930f11c7ce556ee584781d58aec20ff",
@@ -51,8 +61,12 @@
     "components/workspace/RoleplayBranchSwitch.tsx": "2df845ab66edb6b6c59160c884aadcfa1d8c5962947f25ca3d5bb5b5f32e0613",
     "components/workspace/RoleplayCastPicker.tsx": "2eaf11a47b7f5a5f9839d00f7d07bba2fa28d7de6044faf67ab994c74c6a8070",
     "components/workspace/RoleplayGenerationPanel.tsx": "3c189fde3eaa97601ef4218056098149f7c0d82d33ded93071c82c741a0f6ac5",
-    "components/workspace/RoleplayScriptBlocks.tsx": "f862b2e7643680d7bbc32cf22e8f5cf314a689ed492ebdd35a698a6d4c8fc3d0",
-    "components/workspace/RoleplaySessionView.tsx": "6b4dabbd8e07bcd59b026d724ee9fab71d89b3ac02dcc8fef2085b6f75351259",
+    "components/workspace/RoleplayReplyAudio.tsx": "7bdd39cbfd4058c69c1a8352856a2de31fc90c64ee912366cfeaf13e1100662e",
+    "components/workspace/RoleplayScriptBlocks.tsx": "80d7415c059c0c122842f4050ff7b9b1a071192d9b8d6c1ce7496d2649811513",
+    "components/workspace/RoleplaySessionView.tsx": "cab98f653e2290f1380c5cba41afe7f1563af17f21f2acdac7d2102587b28ca7",
+    "components/workspace/RoleplayVoicePanel.tsx": "18df3733ef2d511db500d71bb417541317bad764a71ad568d20b7a37e975cc8f",
+    "components/workspace/RoleplayVoiceSelect.tsx": "28da52b5e13e70fd6b76989821761bbd552b42a7db818ff9d1291b553f72921f",
+    "components/workspace/RoleplayVoiceSettings.tsx": "3ce3ccb5f35f03e732e39766f9885b2f2938c6412ace0eaaac13809b6a0e4a04",
     "components/workspace/WorkspaceAISettingsModal.tsx": "9fd53bcd999ff48960ababe2f64e4d52478f8176129a6a39884b909d014e1a00",
     "components/workspace/WorkspaceAISetupPrompt.tsx": "c08d4eefacb5c61c0477184ba70f9a1ce05571e9c87077f3a6ecfe120f0074fe",
     "components/workspace/WorkspaceAppearanceSettings.tsx": "037d31114cb204670758b2d27c28bb2b1df358f93205653bfd50f87e607e434c",
@@ -69,7 +83,7 @@
     "components/workspace/WorkspaceWorldEntriesPanel.tsx": "52f04f4c9aba32a86e028e8a9c77c173c212ff79007d28e63ab8bc44e0255d83",
     "components/workspace/chapter-editor-buffer.ts": "e99b987df16c88fccc28e35e9d6048324cf90d9d7dc43742991e58be7029518e",
     "components/workspace/selection-novel-studio-helpers.tsx": "6072a066e4d155842e5dfb8424b319ce1390d225d3a414f6825db65b10a4e35d",
-    "components/workspace/selection-novel-studio-shell.tsx": "39c65c9250880348ca92c4d224353d3572e6d6ba629f1dd597fc40df0417320e",
+    "components/workspace/selection-novel-studio-shell.tsx": "804f66b63628395cb684c90fed6d2a15bd4155a146bb6bae31995334da3198c8",
     "components/workspace/selection-novel-studio.tsx": "149021f20bd3d032ad17fb60f76d10465484f6cc22701752a08cf42d7763148e",
     "components/workspace/use-chapter-reader-mode.ts": "921c5768f5f6107d3d5384cf62577e9eb75d17753b2ec99e0e21b36f78486ca4",
     "components/workspace/use-desktop-workspace-layout.ts": "667f96cd0a32d84eec6981e2b41131a0bd92d6ff8b9b73dbc6904f0b41aabd8e",
@@ -84,12 +98,14 @@
     "components/writing-skills/WritingSkillStudio.tsx": "081e1e42018a50d0975a5142b3422c951a12801912049ef675bdd5e7d2cee98e",
     "config/next-build-safety.json": "5166b9b147bf55cef8148360179ec01e53ad557119e127c178c9a9b32293fa28",
     "config/presets/retale-default-zh-CN.json": "efdc88647a6b07333c6610fff3781b59369c86277209e5d80c9dcfc5e0746797",
+    "eslint.config.mjs": "5f9993b8e341343bde936871aa2943d15026a795f57241aead9ed69c90312648",
     "lib/ai-settings.ts": "758d9083091dd29229003b376ac7e04a099e5153a790e04ce369201756d9e193",
     "lib/book-search.ts": "669bd2d7f89af47f620341c4f2e536e9c1ea323b3c5893a0a5a70174b110c060",
     "lib/browser-clipboard.ts": "a263ea7a176d46116b4b386ae2f03b37a371674e1ea7cd0e479761bf45435aba",
     "lib/browser-preferences.ts": "b177ee6acf44a563ad5ce15c348549916fd48d78181fdc49708512d308b1756c",
     "lib/chapter-draft-cache.ts": "b7fb70a78c6f31bf7aa36a2593b101f7876dd676d11efc252c0ebe9072d58d32",
     "lib/chapter-navigation.ts": "1ec0d8d32960ae6a826f059b5f6779bddcf3b7c9b4469852d0f547f6f7e9f571",
+    "lib/character-prompt-completion.ts": "a5448ccf3076b3fcdf64e1074b3aa74710f51bc36a6ccc1408d7b9fa1cbf15c6",
     "lib/client-request-broker.ts": "8dead559fb5110f1ddfa5337cd2691ecbedfa993f5500e1c72e07e0c16eec83b",
     "lib/context-compression.ts": "44b596c43c8dd3fa60a3d8ebf53be8b686debbcd6bd6b5e83d7c3b87b594d256",
     "lib/context-warnings.ts": "be9db74880c108dcc5380b910c8b7686cea178a70e603a4e1ff9cdf82366bf3c",
@@ -97,10 +113,11 @@
     "lib/generation-prompt-preview.ts": "4441cd3f54dcc206d4a9367ed77cdc36cf1c7e2eba87856e77407eed11f061ec",
     "lib/html-entity-decoder.browser.ts": "7f295da0988e5d9d9cb7b4ca97af126e2321650d258ca82a08835917f6481894",
     "lib/html-entity-decoder.server.ts": "d16ae10181a1407033189d59108e5f69974a2496e23942e3b3562d8b0252f7be",
-    "lib/i18n/messages.ts": "e568717c9d32a4702d5d9f828f0a081b7be8e5cd65aab1e47c40685b32dfe411",
+    "lib/i18n/messages.ts": "f026566731013359e48ff9c716d8d211981d78088a49987cc2a94b771161bf38",
     "lib/i18n/progress-message.ts": "a64ab026164306aac07ec0b1a37a5bb7152c34069992cb54f2498b024b3e087b",
     "lib/i18n/progress-messages.ts": "16b5bab059d2f0c88ae8e4cbd44c2a6171d01aedb0c5654b3a8541579fdce082",
     "lib/i18n/provider.tsx": "5a93b9305ad4ebfb33758e3119b345e26564aa6501bbc50a4758c3c32d0f7ba1",
+    "lib/i18n/voice-messages.ts": "814d756ffaae49a6ff8dd231cad8d07d1cf8e128da2178bcf5233902f2ffe44b",
     "lib/library-knowledge-status.ts": "504aa81ce736cb9e24cfd8808219a1cb96f21178fbcfae39ee824c02e36abd7c",
     "lib/local-embedding.ts": "6b176824149d3c0b6054b6cf20d5864fad43f0f5bc21a29ab0cf83d96973c5aa",
     "lib/preset-compat/apply-runtime.ts": "634f1753847c8b1ed712ca4517403bac37a7e4142d5fc90c046b15df2539223e",
@@ -134,7 +151,7 @@
     "lib/roleplay-context.ts": "97a7da231c55559b30e22f1c8b119032b6565b7c26c5c68b0fa8eda07e925a1c",
     "lib/roleplay-generation.ts": "60e08e164127aa2e7a081d51df4e81a52294c308df1667fa1df6508b1fc482ab",
     "lib/roleplay-response.ts": "3f0d8d624daf4e89def292142fac8288c794b9e9ee3aff9e5d6f9e3e025267ad",
-    "lib/roleplay-script.ts": "4426b1ea0c588f14dde167ba0c5a341117aa48252632f82558ec84479ac2d06d",
+    "lib/roleplay-script.ts": "0002005f0db29dca5d3ad4ea26d42ee1c76592a3cd049eb254765e4451155e13",
     "lib/roleplay-types.ts": "d5cc5fe082ec2d50e03bcfd4b29ff4749e65a9f1a728f6341b91679584e0f25d",
     "lib/selection-range.ts": "7804e72544bce1bd9b14e194bd019c7af5f3a35c9596f7697fdda78a886c3cbb",
     "lib/server/ai-settings.ts": "c4f7424715780f603e6add7f0bd83ce99a9ca3f5c3dad1fb3e8c5aa7062df012",
@@ -186,8 +203,8 @@
     "lib/server/memory-aware-batching.ts": "15923d549dbf5541bbb7091b0e1f62e6369cf6ffec76b49a3581adb47529e889",
     "lib/server/novel-cover.ts": "251109d956a80fd4a37b4089976069ff524622e15862aaaf7b08b86b6f28b935",
     "lib/server/novel-resource-handlers.ts": "63e7380a958a1d6a2f2de16e29802a2b37e7ddbf3a1b277ace9232c162830882",
-    "lib/server/ollama-local.ts": "25f3f24274df15da004b995a03c42c358696f723cb96bc7262a33b6b8b911d5e",
-    "lib/server/openai-compatible.ts": "0e51d4476a71f18c5a1535d424345b2783ca562feb9baf392a6d94475c56c5e3",
+    "lib/server/ollama-local.ts": "c341f3c9c344dd97194e407d7e9f3b2a1cd64b531498ff689a609c3c111423cc",
+    "lib/server/openai-compatible.ts": "18318e1681e37a07416aa2b2e4c83a2b9cc9827d571d8477dd0afc8e43a81d4f",
     "lib/server/outline-bootstrap.ts": "d7e255e3a27f893b7778e8eb1de829ba787cccfddbe6a46ccb8cd19c057204cd",
     "lib/server/outline-node-store.ts": "e984edf35966744cc44590a356e9448ce0ab42deb6dd46303ca93a58d875ac35",
     "lib/server/per-novel-write-gate.ts": "02189c5a7835ebe500536913e86fa8fb81f5218483d929e11a9f7aee3afeab53",
@@ -233,12 +250,20 @@
     "lib/story-knowledge.ts": "71349b12358bad250d721d5e2654646ad3962a42fbbecb98e15fac813e6c2617",
     "lib/theme-preferences.ts": "189114635970e58c2b04bc595a653f066990935eba394b33557836fd9b02fffb",
     "lib/types.ts": "67ac9f9d5f73713db49a130afe23acdc19c06f244c8458affe047f6659970cc1",
+    "lib/use-voice-settings.ts": "dfbc59e84b1586ecba813e4646a7875e155d3c28bc54d16847dd19f179546e92",
     "lib/utils.ts": "0708161e39603cb700dd0dfe842fb2cf86172dbe322727a236ac101482566769",
+    "lib/voice-audio.ts": "2ebc523d0a7e8973de897a30401a3aa2d807805a33715d47337bdc6ab549d850",
+    "lib/voice-call.ts": "8948783bd56a3a12a1c31c3cec9db7a426f34ea570e23e1c85a27a55a65b149e",
+    "lib/voice-chat.ts": "a4a7fd00bb2c0d12e0be5a0798fdbe81e9e3e048bed43d5fe16f9c914744b08e",
+    "lib/voice-message-player.ts": "4affddfd0bc0f53808d46291af871d68b540362a5ce004cd9c923e3f3538bba2",
     "lib/workspace-state.ts": "bd444ac498138b3c5cb4594e8e7a3fbb6eb9db75db2fa07f1c94697f3d5e8a85",
     "lib/workspace-user-facing-errors.ts": "4b3e423ede47d6772ce9e9eb96113e84c3cc29e0583aa0851658684bef078714",
     "lib/writing-skill-defaults.ts": "119efb117f55b6c5a555e847e6e864ca85f57073608504d890670a9bbedb68a3",
     "lib/writing-skill-selection.ts": "5248b221060a40edfa184f8b6013fabcc1a59893de4ee15846e26816281469e0",
     "lib/writing-skill-types.ts": "838b86d82897b7b9f388e27e5009ae9cdd2f0065dd9b515e1a8b11929597efc5",
+    "postcss.config.mjs": "dfac7ac2d86d326a0e5adb024e7943c181393ed17a5fcb8f0315b24c7da6ddde",
+    "public/voice-capture-worklet.js": "535ca9551eb246a52b3aa8bc2fd032ffb1ac4583d315bf7030d04c2ce30df35a",
+    "scripts/test-path-safety.mjs": "1129ed66508395452be6a17a289c96e1a266ec78ad705944be22a3794624c767",
     "store/novel-store-ai.ts": "14dc49a1fbd10b148c541c14795f7c4aa5fa6fd97a0aa23c773bd02d37aaf330",
     "store/novel-store-knowledge.ts": "04d5a42a30492562739b60e3ad1452f84869dfe348d3d6517b1c492e2651bd26",
     "store/novel-store-persistence.ts": "fc347b55d5657683c477f3077e7fbae9584226f3721d10a831e955159325dd5e",
@@ -246,68 +271,64 @@
     "store/novel-store-types.ts": "8e406677d2c28a78fd7d2abd93f7b9b8867586137c9765e56e2bd3b6163d38bd",
     "store/novel-store.ts": "c87feb04872f3140aa929633e2c7775af33a0c3f0c4958e5b2ffacff610a28ed",
     "store/workspace-persistence-classifier.ts": "b82c92e84a035b5429fbf313be7f109076fa028f955980c662f47b9205351666",
-    "types/node-sqlite.d.ts": "27671e75297dd96f274cf8bbf96b5c8a9a7bc66aa5633e990eaba50104869007",
-    "app/globals.css": "dcccbc84d6bb8dc16262c449bbe54f6c0b7c77fe2ef168f7cc59018d38afae73",
-    "app/themes.css": "00df8dd964235034fb2d27a9170aae89a0283b110e1f0af27329d41257fff8a8",
-    "app/favicon.ico": "2b8ad2d33455a8f736fc3a8ebf8f0bdea8848ad4c0db48a2833bd0f9cd775932",
-    "app/library/page.tsx": "0ef8d0276a522774913300735652f2a8436ad7aa52febd6efab5b636ad7e5c37",
-    "app/workspace/page.tsx": "b4cee2bd271fddd887d07ba99bcc308b8b98dd913a76340797fda32ecd0b7b53",
-    "app/writing-skills/page.tsx": "3a922cb03590e00a30434e43d9dbbfa420cd9fd4a7413903398484e5a9a1c457",
-    "app/task/page.tsx": "7f065dfdf70607f96a7e08a0665b30dcee375950e3b5db3da10df7742445e8d6",
-    "app/task/task-page-client.tsx": "5fc6d9ca167911583d3d2def623dd856ea6b237bba8f5260f97257d45e659c44",
-    "app/task/task-abort-button.tsx": "9a33221533d62ba1e35e6bc21101679e146df11ef9009ec5bca418b30e8f65fe",
-    "postcss.config.mjs": "dfac7ac2d86d326a0e5adb024e7943c181393ed17a5fcb8f0315b24c7da6ddde",
-    "eslint.config.mjs": "5f9993b8e341343bde936871aa2943d15026a795f57241aead9ed69c90312648",
-    "scripts/test-path-safety.mjs": "1129ed66508395452be6a17a289c96e1a266ec78ad705944be22a3794624c767"
+    "types/node-sqlite.d.ts": "27671e75297dd96f274cf8bbf96b5c8a9a7bc66aa5633e990eaba50104869007"
   },
   "overrides": {
-    "components/library/project-card.tsx": {
-      "sha256": "cbc4a56562e8ec4fe9a485528066e47705c7a55849557316ad97d5e225550e98",
-      "reason": "User-requested date-only display in the demo; retain the upstream layout and stored timestamps."
-    },
-    "components/what-if/WhatIfSessionView.tsx": {
-      "sha256": "caf863ca3641d54a8496c380d97c7cf49a6b5ea7d980b5d86784abc15ce15ea3",
-      "reason": "User-requested date-only display in the demo; retain the upstream layout and stored timestamps."
+    "app/task/task-page-client.tsx": {
+      "reason": "User-requested date-only display in the demo; retain the upstream layout and stored timestamps.",
+      "sha256": "3a770c927183d19b051d5ccbc96fb71a573175f46fdb645f0f79a32bd9b73aa9"
     },
     "components/future-jump/BridgeSummaryPanel.tsx": {
-      "sha256": "829320ad98c235ba59fdf75b48a7a308242f51ba8e59fe969e469b8763a97856",
-      "reason": "User-requested date-only display in the demo; retain the upstream layout and stored timestamps."
-    },
-    "app/task/task-page-client.tsx": {
-      "sha256": "3a770c927183d19b051d5ccbc96fb71a573175f46fdb645f0f79a32bd9b73aa9",
-      "reason": "User-requested date-only display in the demo; retain the upstream layout and stored timestamps."
-    },
-    "components/timeline/SwipeDeleteRow.tsx": {
-      "sha256": "5215a38c6f61d257e9d1019799f1b0f35236a8202f19572ef1caaadf9981925b",
-      "reason": "User-requested directory UX fix: contextual delete actions without a permanent column, clean card backgrounds, and keyboard focus affordances; preserve mobile swipe deletion."
-    },
-    "components/timeline/ChapterTimelineCard.tsx": {
-      "sha256": "8c1cbc208d89353d0bb70510d7a38cce4177cc5b3ab7ac648e794ed30cc99921",
-      "reason": "User-requested directory UX fix: contextual delete actions without a permanent column, clean card backgrounds, and keyboard focus affordances; preserve mobile swipe deletion."
-    },
-    "components/timeline/BranchBlock.tsx": {
-      "sha256": "457b8efa79f041f5854ca5db8ddade3acd5b69581e47c4135d644bd2f2e42ef9",
-      "reason": "User-requested directory UX fix: contextual delete actions without a permanent column, clean card backgrounds, and keyboard focus affordances; preserve mobile swipe deletion."
-    },
-    "components/library/project-grid.tsx": {
-      "sha256": "e19406eb4696b56974834e5da6d5a1e46c1399430bc2bc8eefb67311c637ddd8",
-      "reason": "Open demo books in prose view even when a prior graph preference was saved."
-    },
-    "components/ui/DialogSurface.tsx": {
-      "sha256": "c7d8dfc76f6c669d25d7000dac9046abcfa8c1ea1255130f56bef9e020ebaf1c",
-      "reason": "Provide an inline mobile tutorial slot inside the dialog scroll and focus boundary."
-    },
-    "components/workspace/WorkspaceHeader.tsx": {
-      "sha256": "e9209086e1964cfa31545568bca21d415383914f80abe8ea0b9054b99c46448e",
-      "reason": "Provide an inline mobile tutorial slot below the workspace header without covering prose or navigation."
-    },
-    "components/workspace/selection-novel-studio-shell.tsx": {
-      "sha256": "1538a9c82fde5547ed1248d7546c411b518df1d2870091952135f96d740ad19e",
-      "reason": "Keep mobile rewrite actions readable and keep transient notices below dialogs without intercepting touches."
+      "reason": "User-requested date-only display in the demo; retain the upstream layout and stored timestamps.",
+      "sha256": "829320ad98c235ba59fdf75b48a7a308242f51ba8e59fe969e469b8763a97856"
     },
     "components/library/LibraryPageShell.tsx": {
-      "sha256": "ac48921466d277908cdcee0d613fd86c8fc3a7a8bf54ba5c81a8530bc2b63d85",
-      "reason": "Wrap the library language switcher on narrow screens and keep its touch targets at least 44 pixels tall."
+      "reason": "Wrap the library language switcher on narrow screens and keep its touch targets at least 44 pixels tall.",
+      "sha256": "ac48921466d277908cdcee0d613fd86c8fc3a7a8bf54ba5c81a8530bc2b63d85"
+    },
+    "components/library/project-card.tsx": {
+      "reason": "User-requested date-only display in the demo; retain the upstream layout and stored timestamps.",
+      "sha256": "cbc4a56562e8ec4fe9a485528066e47705c7a55849557316ad97d5e225550e98"
+    },
+    "components/library/project-grid.tsx": {
+      "reason": "Open demo books in prose view even when a prior graph preference was saved.",
+      "sha256": "e19406eb4696b56974834e5da6d5a1e46c1399430bc2bc8eefb67311c637ddd8"
+    },
+    "components/timeline/BranchBlock.tsx": {
+      "reason": "User-requested directory UX fix: contextual delete actions without a permanent column, clean card backgrounds, and keyboard focus affordances; preserve mobile swipe deletion.",
+      "sha256": "457b8efa79f041f5854ca5db8ddade3acd5b69581e47c4135d644bd2f2e42ef9"
+    },
+    "components/timeline/ChapterTimelineCard.tsx": {
+      "reason": "User-requested directory UX fix: contextual delete actions without a permanent column, clean card backgrounds, and keyboard focus affordances; preserve mobile swipe deletion.",
+      "sha256": "8c1cbc208d89353d0bb70510d7a38cce4177cc5b3ab7ac648e794ed30cc99921"
+    },
+    "components/timeline/SwipeDeleteRow.tsx": {
+      "reason": "User-requested directory UX fix: contextual delete actions without a permanent column, clean card backgrounds, and keyboard focus affordances; preserve mobile swipe deletion.",
+      "sha256": "5215a38c6f61d257e9d1019799f1b0f35236a8202f19572ef1caaadf9981925b"
+    },
+    "components/ui/DialogSurface.tsx": {
+      "reason": "Provide an inline mobile tutorial slot inside the dialog scroll and focus boundary.",
+      "sha256": "c7d8dfc76f6c669d25d7000dac9046abcfa8c1ea1255130f56bef9e020ebaf1c"
+    },
+    "components/what-if/WhatIfSessionView.tsx": {
+      "reason": "User-requested date-only display in the demo; retain the upstream layout and stored timestamps.",
+      "sha256": "caf863ca3641d54a8496c380d97c7cf49a6b5ea7d980b5d86784abc15ce15ea3"
+    },
+    "components/workspace/WorkspaceHeader.tsx": {
+      "reason": "Provide an inline mobile tutorial slot below the workspace header without covering prose or navigation.",
+      "sha256": "e9209086e1964cfa31545568bca21d415383914f80abe8ea0b9054b99c46448e"
+    },
+    "components/workspace/selection-novel-studio-shell.tsx": {
+      "reason": "Keep mobile rewrite actions readable and keep transient notices below dialogs without intercepting touches.",
+      "sha256": "54dd8898f54c98e97eeb3db37c1dc70fc999c7f36cd5004c5a13021ef504a53f"
+    },
+    "lib/i18n/voice-messages.ts": {
+      "reason": "State that demo calls use no microphone, play preset lines and never store keys.",
+      "sha256": "550f5b0ef20461144507f17d40c290c72dc268644dd77deb0f9a6ed2dac5f489"
+    },
+    "lib/voice-audio.ts": {
+      "reason": "Load the capture worklet under the GitHub Pages base path, which fetch patching cannot reach.",
+      "sha256": "ef0afba527d92d84c51933f9ded7df08dba5c54bdbb10e8e07b0fde06cc190a4"
     }
   }
 }

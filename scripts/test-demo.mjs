@@ -139,7 +139,6 @@ try {
   await expect(page.getByRole('heading', { name: book.title })).toBeVisible()
   await page.setViewportSize({ width: 390, height: 844 })
   await page.getByRole('button').filter({ has: page.getByRole('heading', { name: secondBook.title }) }).click()
-  await page.getByRole('button', { name: '正文', exact: true }).click()
   await expect(page.getByTestId('workspace-chapter-reader')).toContainText(secondBook.chapters[0].text.split('\n\n')[0])
   await expect(page.getByTestId('workspace-mobile-toolbar')).toBeVisible()
   await page.screenshot({ path: 'test-results/mobile.png', fullPage: true })

@@ -9,6 +9,7 @@ import { EditorContent, useEditor } from '@tiptap/react'
 import { useDesktopWorkspaceLayout } from '@/components/workspace/use-desktop-workspace-layout'
 import { WorkspaceReaderToolbar } from '@/components/workspace/WorkspaceReaderToolbar'
 import { WorkspaceRewriteGuide } from '@/components/workspace/WorkspaceRewriteGuide'
+import { CharacterPromptTextarea } from '@/components/workspace/CharacterPromptTextarea'
 import { WorkspaceAISetupPrompt } from '@/components/workspace/WorkspaceAISetupPrompt'
 import { WorkspaceContextPresetSelect } from '@/components/workspace/WorkspaceContextPresetSelect'
 import { ContextCompressionControl, ContextCompressionWarning } from './ContextCompressionControl'
@@ -591,6 +592,7 @@ export function SelectionNovelStudio() {
             futureJumpView={
               activeWorkspaceSelection.kind === 'future_jump' ? (
                 <FutureJumpView
+                  characters={currentNovelCharactersSorted}
                   novelId={currentNovelId ?? ''}
                   branchId={storyTimelineBranchId}
                   runId={activeWorkspaceSelection.runId}
@@ -984,6 +986,7 @@ export function SelectionNovelStudio() {
 
       {futureMapLaunch ? (
         <FutureMapOverlay
+          characters={currentNovelCharactersSorted}
           novelId={futureMapLaunch.novelId}
           branchId={futureMapLaunch.branchId}
           sourceContext={futureMapLaunch.sourceContext}
@@ -1071,10 +1074,10 @@ export function SelectionNovelStudio() {
                   </div>
                 ) : null}
 
-                <label className="block">
+                <div className="block">
                   <span className="mb-2 block text-sm text-zinc-300">{t('workspace.shell.rewriteInstructionLabel')}</span>
-                  <textarea value={rewritePrompt} onChange={(event) => handleRewritePromptChange(event.target.value)} className="h-32 w-full rounded-xl border border-line/15 bg-shade/10 px-4 py-3 text-base sm:text-sm text-zinc-100 outline-none" placeholder={t('workspace.shell.rewriteInstructionPlaceholder')} />
-                </label>
+                  <CharacterPromptTextarea aria-label={t('workspace.shell.rewriteInstructionLabel')} characters={currentNovelCharactersSorted} value={rewritePrompt} onValueChange={handleRewritePromptChange} className="h-32 w-full rounded-xl border border-line/15 bg-shade/10 px-4 py-3 text-base sm:text-sm text-zinc-100 outline-none" placeholder={t('workspace.shell.rewriteInstructionPlaceholder')} />
+                </div>
 
                 <details className="group/writing-skills border-b border-line/10 py-3">
                   <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 rounded-lg text-sm text-zinc-300 outline-none focus-visible:ring-2 focus-visible:ring-violet-400 [&::-webkit-details-marker]:hidden">

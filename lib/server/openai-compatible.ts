@@ -59,6 +59,8 @@ export type RewriteResult = {
 }
 
 export type StreamRewriteRequest = {
+  reasoningEffort?: 'low'
+  thinking?: { type: 'enabled' | 'disabled' }
   systemPrompt: string
   userPrompt: string
   temperature?: number
@@ -665,6 +667,8 @@ export async function streamRewriteWithOpenAICompatible(
     ...(typeof input.requestOptions?.presence_penalty === 'number' ? { presence_penalty: input.requestOptions.presence_penalty } : {}),
     ...(typeof input.requestOptions?.max_tokens === 'number' ? { max_tokens: input.requestOptions.max_tokens } : {}),
     stream: true,
+    ...(input.reasoningEffort ? { reasoning_effort: input.reasoningEffort } : {}),
+    ...(input.thinking ? { thinking: input.thinking } : {}),
     messages,
   }
   const request = { url, body: requestBody, messages }

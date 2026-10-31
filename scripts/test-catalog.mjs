@@ -104,6 +104,12 @@ for (const edition of [1,2,3]) {
   delete rerun.novels['demo-sect']
   assert.equal(JSON.parse(createDemoApi(JSON.stringify(rerun)).snapshot()).novels['demo-sect'],undefined)
 }
+// Seeded replies gain sample playback when a returning visitor upgrades to v6.
+const v5 = structuredClone(snapshot)
+v5.catalogVersion = 5
+for (const detail of Object.values(v5.details)) for (const message of detail.messages ?? []) if (message.script) delete message.script.dialogueOnly
+const v6 = JSON.parse(createDemoApi(JSON.stringify(v5)).snapshot())
+assert.ok(demoBooks.every(book => Object.values(v6.details).some(detail => detail.novelId === book.id && detail.messages?.some(message => message.script?.dialogueOnly))))
 // Upgrade an edited v2 collection, including intentional deletions, to bilingual v3.
 const v2 = structuredClone(snapshot)
 v2.catalogVersion = 2

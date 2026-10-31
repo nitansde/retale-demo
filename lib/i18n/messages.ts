@@ -1,4 +1,5 @@
 import { progressEnMessages, progressZhMessages } from '@/lib/i18n/progress-messages'
+import { voiceEnMessages, voiceZhMessages } from '@/lib/i18n/voice-messages'
 
 export const SUPPORTED_LOCALES = ['zh', 'en'] as const
 export const LOCALE_STORAGE_KEY = 'retale.locale'
@@ -7,6 +8,11 @@ export type Locale = (typeof SUPPORTED_LOCALES)[number]
 export type TranslationValues = Record<string, string | number>
 
 export const zhMessages = {
+  ...voiceZhMessages,
+  'characterPrompt.insert': '插入角色',
+  'characterPrompt.hint': '输入部分名字或 @，快速选择角色',
+  'characterPrompt.suggestions': '角色名建议',
+  'characterPrompt.keyboardHint': '↑↓ 选择 · Enter / Tab 插入 · Esc 关闭',
   ...progressZhMessages,
   "compression.title": "压缩上下文",
   "compression.description": "仅总结当前分支中用户生成的历史文本与对话；每个写作块或对话轮次计为一章。原著正文不参与压缩，已保存的历史正文仍可查看。",
@@ -639,8 +645,8 @@ export const zhMessages = {
   'roleplay.narration': '旁白',
   'roleplay.innerThought': '心声',
   'roleplay.dialogueOnly': '仅对话',
-  'roleplay.dialogueOnlyHint': '只生成对方的一条完整长回复；可用大段对白或第一人称自述推进情节，心声偶尔用括号嵌入。',
-  'roleplay.dialogueOnlyEmptyHint': '写下你的台词或情境引导，让对方用大段对白或第一人称自述接住你，并在没有旁白的情况下推进情节。',
+  'roleplay.dialogueOnlyHint': '只生成对方一至两句的简短回复，不含旁白；心声偶尔用括号嵌入。',
+  'roleplay.dialogueOnlyEmptyHint': '写下你的台词或情境引导，让对方用一两句台词接住你，并在没有旁白的情况下推进情节。',
   'roleplay.sendDialogue': '生成对话',
   'roleplay.you': '我方',
   'roleplay.storyGuidance': '故事引导',
@@ -1508,6 +1514,11 @@ export type TranslationKey = keyof typeof zhMessages
 type MessageDictionary = Record<TranslationKey, string>
 
 export const enMessages: MessageDictionary = {
+  ...voiceEnMessages,
+  'characterPrompt.insert': 'Insert character',
+  'characterPrompt.hint': 'Type part of a name or @ to choose a character',
+  'characterPrompt.suggestions': 'Character name suggestions',
+  'characterPrompt.keyboardHint': '↑↓ choose · Enter / Tab insert · Esc close',
   ...progressEnMessages,
   "compression.title": "Compress context",
   "compression.description": "Summarize generated history in this branch. Each writing block or conversation turn counts as a chapter. Original novel text is excluded; saved history remains readable.",
@@ -2141,8 +2152,8 @@ export const enMessages: MessageDictionary = {
   'roleplay.narration': 'Narration',
   'roleplay.innerThought': 'Inner thought',
   'roleplay.dialogueOnly': 'Dialogue only',
-  'roleplay.dialogueOnlyHint': 'Generate one complete long reply from the counterpart; use extended dialogue or first-person narration to move the scene forward, with occasional inline thoughts in parentheses.',
-  'roleplay.dialogueOnlyEmptyHint': 'Write a line or scene cue and let the counterpart answer in extended dialogue or first-person narration, moving the scene forward without narration blocks.',
+  'roleplay.dialogueOnlyHint': 'Generate a short one- or two-sentence reply from the counterpart, without narration; occasional inline thoughts go in parentheses.',
+  'roleplay.dialogueOnlyEmptyHint': 'Write a line or scene cue and let the counterpart answer in one or two sentences, moving the scene forward without narration blocks.',
   'roleplay.sendDialogue': 'Generate dialogue',
   'roleplay.you': 'You',
   'roleplay.storyGuidance': 'Story direction',

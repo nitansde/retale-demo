@@ -638,7 +638,7 @@ function buildEvidenceSnippet(evidence: KnowledgeEvidence[]) {
   return evidence[0]?.quote?.trim() || ''
 }
 
-function normalizeProfileFacet(raw: unknown): CharacterRoleCardFacet | undefined {
+function normasecondSampleProfileFacet(raw: unknown): CharacterRoleCardFacet | undefined {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return undefined
   const record = raw as Record<string, unknown>
   const content = typeof record.content === 'string'
@@ -946,15 +946,15 @@ function normalizeCharacterExtractionRecord(row: Record<string, unknown>) {
     ? row.profile as Record<string, unknown>
     : {}
   const profile = normalizeCharacterRoleCardProfile({
-    personality: normalizeProfileFacet(profileRecord.personality ?? row.personality),
-    gender: normalizeProfileFacet(profileRecord.gender ?? row.gender),
-    identity: normalizeProfileFacet(profileRecord.identity ?? row.identity),
-    capability: normalizeProfileFacet(profileRecord.capability ?? row.capability),
-    appearance: normalizeProfileFacet(profileRecord.appearance ?? row.appearance),
-    body: normalizeProfileFacet(profileRecord.body ?? row.body),
-    clothing: normalizeProfileFacet(profileRecord.clothing ?? row.clothing),
-    speakingStyle: normalizeProfileFacet(profileRecord.speakingStyle ?? row.speaking_style ?? row.speakingStyle),
-    likes: normalizeProfileFacet(profileRecord.likes ?? row.likes),
+    personality: normasecondSampleProfileFacet(profileRecord.personality ?? row.personality),
+    gender: normasecondSampleProfileFacet(profileRecord.gender ?? row.gender),
+    identity: normasecondSampleProfileFacet(profileRecord.identity ?? row.identity),
+    capability: normasecondSampleProfileFacet(profileRecord.capability ?? row.capability),
+    appearance: normasecondSampleProfileFacet(profileRecord.appearance ?? row.appearance),
+    body: normasecondSampleProfileFacet(profileRecord.body ?? row.body),
+    clothing: normasecondSampleProfileFacet(profileRecord.clothing ?? row.clothing),
+    speakingStyle: normasecondSampleProfileFacet(profileRecord.speakingStyle ?? row.speaking_style ?? row.speakingStyle),
+    likes: normasecondSampleProfileFacet(profileRecord.likes ?? row.likes),
   })
   const looseProfile = buildProfileFromLooseRecord(row, evidence)
   const finalProfile = normalizeCharacterRoleCardProfile({ ...looseProfile, ...profile })
@@ -1108,15 +1108,15 @@ export function normalizeKnowledgeExtraction(raw: unknown, chapterNo: number): C
               ? row.profile as Record<string, unknown>
               : {}
             const profile = normalizeCharacterRoleCardProfile({
-              personality: normalizeProfileFacet(profileRecord.personality ?? row.personality),
-              gender: normalizeProfileFacet(profileRecord.gender ?? row.gender),
-              identity: normalizeProfileFacet(profileRecord.identity ?? row.identity),
-              capability: normalizeProfileFacet(profileRecord.capability ?? row.capability),
-              appearance: normalizeProfileFacet(profileRecord.appearance ?? row.appearance),
-              body: normalizeProfileFacet(profileRecord.body ?? row.body),
-              clothing: normalizeProfileFacet(profileRecord.clothing ?? row.clothing),
-              speakingStyle: normalizeProfileFacet(profileRecord.speakingStyle ?? row.speaking_style ?? row.speakingStyle),
-              likes: normalizeProfileFacet(profileRecord.likes ?? row.likes),
+              personality: normasecondSampleProfileFacet(profileRecord.personality ?? row.personality),
+              gender: normasecondSampleProfileFacet(profileRecord.gender ?? row.gender),
+              identity: normasecondSampleProfileFacet(profileRecord.identity ?? row.identity),
+              capability: normasecondSampleProfileFacet(profileRecord.capability ?? row.capability),
+              appearance: normasecondSampleProfileFacet(profileRecord.appearance ?? row.appearance),
+              body: normasecondSampleProfileFacet(profileRecord.body ?? row.body),
+              clothing: normasecondSampleProfileFacet(profileRecord.clothing ?? row.clothing),
+              speakingStyle: normasecondSampleProfileFacet(profileRecord.speakingStyle ?? row.speaking_style ?? row.speakingStyle),
+              likes: normasecondSampleProfileFacet(profileRecord.likes ?? row.likes),
             })
             const looseProfile = buildProfileFromLooseRecord(row, evidence)
             const finalProfile = normalizeCharacterRoleCardProfile({ ...looseProfile, ...profile })
@@ -1680,7 +1680,7 @@ export function buildKnowledgeExtractionPrompt(
     'evidence 数组项固定使用 quote、line_start、line_end。不要在 evidence 项里使用 text、content 或其他字段名。',
     '本次提供完整章节内容。',
     '最小示例：',
-    '{"chapter_no":1,"summary":"一句话总结","characters":[{"name":"罗德","aliases":[],"description_delta":"没落家族出身的学徒｜擅长火系法术","profile":{"identity":{"content":"没落家族出身的学徒"},"capability":{"content":"擅长火系法术"},"speakingStyle":{"content":"说话直接克制","evidence":"罗德压低声音，只说重点。"}},"evidence":[{"quote":"罗德压低声音，只说重点。","line_start":1,"line_end":1}]}],"known_character_updates":[{"name":"罗德","description_delta":"黑袍下摆被火燎破｜没有变化","profile":{"appearance":{"content":"没有变化"},"body":{"content":"没有变化"},"clothing":{"content":"黑袍下摆被火燎破"}},"evidence":[{"quote":"罗德的黑袍下摆被火燎出一道口子。","line_start":2,"line_end":2}]}],"unknown_character_observations":[{"surface_text":"灰袍老人","observation":"灰袍老人拄杖现身，嗓音沙哑","profile":{"appearance":{"content":"灰袍老人"},"speakingStyle":{"content":"嗓音沙哑"}},"evidence":[{"quote":"那灰袍老人拄杖而来，嗓音沙哑。","line_start":5,"line_end":5}]}],"alias_discoveries":[{"alias":"老周","target":"周执事"}],"relations":[],"events":[],"worldbuilding":[],"open_threads":[]}',
+    '{"chapter_no":1,"summary":"一句话总结","characters":[{"name":"林澄","aliases":[],"description_delta":"没落家族出身的学徒｜擅长火系法术","profile":{"identity":{"content":"没落家族出身的学徒"},"capability":{"content":"擅长火系法术"},"speakingStyle":{"content":"说话直接克制","evidence":"林澄压低声音，只说重点。"}},"evidence":[{"quote":"林澄压低声音，只说重点。","line_start":1,"line_end":1}]}],"known_character_updates":[{"name":"林澄","description_delta":"黑袍下摆被火燎破｜没有变化","profile":{"appearance":{"content":"没有变化"},"body":{"content":"没有变化"},"clothing":{"content":"黑袍下摆被火燎破"}},"evidence":[{"quote":"林澄的黑袍下摆被火燎出一道口子。","line_start":2,"line_end":2}]}],"unknown_character_observations":[{"surface_text":"灰袍老人","observation":"灰袍老人拄杖现身，嗓音沙哑","profile":{"appearance":{"content":"灰袍老人"},"speakingStyle":{"content":"嗓音沙哑"}},"evidence":[{"quote":"那灰袍老人拄杖而来，嗓音沙哑。","line_start":5,"line_end":5}]}],"alias_discoveries":[{"alias":"老周","target":"周执事"}],"relations":[],"events":[],"worldbuilding":[],"open_threads":[]}',
     storyStateBlock,
     `章节标题：${chapterTitle}`,
     '章节正文（带行号）：',
